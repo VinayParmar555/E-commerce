@@ -7,4 +7,3 @@ from app.router.products import router as product_router
 app = FastAPI(title="Radha Krishna")
 app.include_router(product_router)
 
-

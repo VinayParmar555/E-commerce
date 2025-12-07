@@ -1,6 +1,5 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from app.db.session import session
-
 
 
 def get_db():
