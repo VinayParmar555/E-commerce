@@ -3,11 +3,11 @@ from app.db.base import Base
 
 class Product(Base):
    
-    __tablename__ = "product"
+    __tablename__ = "products"
    
     id = Column(Integer, primary_key=True, index= True)
     name = Column(String)
     price = Column(Float)
     description = Column(String)
     quantity = Column(Integer)
-
+    
