@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 class ProductBase(BaseModel):
-    id: int
+    id : int
     name: str
     price: float
     description: str
@@ -10,6 +10,8 @@ class ProductBase(BaseModel):
 class ProductCreate(ProductBase):
     pass
 
-class ProductUpdate(ProductBase):
+class ProductRead(ProductBase):
     pass
 
+class ProductUpdate(ProductBase):
+    pass    
