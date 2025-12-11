@@ -6,3 +6,12 @@ engine = create_engine(db_url)
 
 session = sessionmaker(autocommit = False,autoflush=False,bind=engine)
 
+from app.db.session import session        #Database dependency
+
+def get_db():
+    db = session()
+    try:
+        yield db
+    finally:
+        db.close()
+
