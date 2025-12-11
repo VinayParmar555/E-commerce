@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.core.dependencies import get_db
+from app.db.session import get_db
 from app.db.models.products import Product
 from app.schema.products import ProductBase
 
