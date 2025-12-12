@@ -3,51 +3,44 @@ from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.db.models.products import Product
 from app.schema.products import ProductBase
-
+from app.services.product_service import (
+    List_of_products, add_product, search_product, update_product, delete_product
+)
 router = APIRouter(prefix="/products", tags=["Operations"])
 
 @router.get("/")
-def List_of_products(db:Session = Depends(get_db)):
+def List_of_existing_products(db:Session = Depends(get_db)):
     
-    db_products = db.query(Product).all()
+    db_products = List_of_products(db)
 
     return db_products
 
 @router.get("/{id}")
-def search_product(id: int, db:Session = Depends(get_db)) -> ProductBase:
-    db_product = db.get(Product, id)
+def search_existing_product(id: int, db:Session = Depends(get_db)) -> ProductBase:
+    db_product = search_product(db, id)
     if not db_product:
         raise HTTPException(status_code=404, detail="Product not found")
     return db_product
 
 @router.post("/")
-def add_product(product: ProductBase, db: Session = Depends(get_db)):
-    db_product = db.add(Product(**product.model_dump()))
-    db.commit()
-    db.refresh(db_product)
-    return product
+def add_new_product(product: ProductBase, db: Session = Depends(get_db)):
+    db_product = add_product(db, product)
+
+    return db_product
 
 @router.put("/")
-def update_product(id: int, product: ProductBase, db:Session = Depends(get_db)):
-    db_product = db.get(Product, id)
+def update_existing_product(id: int, product: ProductBase, db:Session = Depends(get_db)):
+    db_product = update_product(db, id)
     if db_product:
-        db_product.name = product.name
-        db_product.description = product.description
-        db_product.price = product.price
-        db_product.quantity = product.quantity
-        db.commit()
-        db.refresh(db_product)
         return "Product Updated"
 
     raise HTTPException(status_code=404, detail="Product not found")
 
 @router.delete("/")        
-def delete_product(id: int, db:Session = Depends(get_db)):                            
-    db_product = db.get(Product, id)
+def delete_existing_product(id: int, db:Session = Depends(get_db)):                            
+    db_product = delete_product(db, id)
     if not db_product:
         raise HTTPException(status_code=404, detail="Product not found")
     
-    db.delete(db_product)
-    db.commit()
     return {"detail" : "Product Deleted"}
 
