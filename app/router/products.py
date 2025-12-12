@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.session import get_db
-from app.db.models.products import Product
 from app.schema.products import ProductBase
 from app.services.product_service import (
     List_of_products, add_product, search_product, update_product, delete_product
@@ -29,7 +28,7 @@ def add_new_product(product: ProductBase, db: Session = Depends(get_db)):
     return db_product
 
 @router.put("/")
-def update_existing_product(id: int, product: ProductBase, db:Session = Depends(get_db)):
+def update_existing_product(id: int, db:Session = Depends(get_db)):
     db_product = update_product(db, id)
     if db_product:
         return "Product Updated"
