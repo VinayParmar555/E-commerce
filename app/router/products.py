@@ -28,8 +28,8 @@ def add_new_product(product: ProductBase, db: Session = Depends(get_db)):
     return db_product
 
 @router.put("/")
-def update_existing_product(id: int, db:Session = Depends(get_db)):
-    db_product = update_product(db, id)
+def update_existing_product(id: int, product: ProductBase, db:Session = Depends(get_db)):
+    db_product = update_product(db, id, product)
     if db_product:
         return "Product Updated"
 
