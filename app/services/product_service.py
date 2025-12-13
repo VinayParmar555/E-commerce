@@ -15,7 +15,8 @@ def search_product(db:Session, id: int):
     return db_product
 
 def add_product(db: Session, product: ProductBase):
-    db_product = db.add(Product(**product.model_dump()))
+    db_product = Product(**product.model_dump())
+    db.add(db_product)
     db.commit()
     db.refresh(db_product)
     return db_product
