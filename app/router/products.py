@@ -24,7 +24,7 @@ def search_existing_product(id: int, db:Session = Depends(get_db)) -> ProductBas
 @router.post("/")
 def add_new_product(product: ProductBase, db: Session = Depends(get_db)):
     db_product = add_product(db, product)
-
+    
     return db_product
 
 @router.put("/")

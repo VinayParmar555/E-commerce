@@ -15,13 +15,14 @@ def search_product(db:Session, id: int):
     return db_product
 
 def add_product(db: Session, product: ProductBase):
+
     db_product = Product(**product.model_dump())
     db.add(db_product)
     db.commit()
     db.refresh(db_product)
     return db_product
 
-def update_product( db:Session, id: int, product: ProductBase):
+def update_product(db:Session, id: int, product: ProductBase):
     db_product = db.get(Product, id)
     if db_product:
         db_product.name = product.name
@@ -32,7 +33,7 @@ def update_product( db:Session, id: int, product: ProductBase):
         db.refresh(db_product)
         return "Product Updated"
 
-    return False     
+    return False
 
 def delete_product( db:Session, id: int):                            
     db_product = db.get(Product, id)
