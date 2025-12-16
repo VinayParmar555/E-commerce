@@ -2,7 +2,7 @@ from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime, timezone
 
 class User(BaseModel): 
-    user_id : int
+    id : int
     name : str
     email : EmailStr
     is_active : bool = True
