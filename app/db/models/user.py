@@ -6,7 +6,7 @@ class Users(Base):
 
     __tablename__ = "users"
 
-    user_id = Column(Integer, primary_key=True, nullable=False)
+    id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String, nullable=False)
     email = Column(String, nullable=False, unique=True)
     is_active = Column(bool = True)
@@ -17,5 +17,3 @@ class Users(Base):
     created_at = Column(DateTime(timezone=True), default=lambda : datetime.now(timezone.utc))
     updated_at = Column(DateTime(timezone=True), default=lambda : datetime.now(timezone.utc), onupdate=lambda : datetime.now(timezone.utc))
 
-
-    
