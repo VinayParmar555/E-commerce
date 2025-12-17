@@ -1,20 +1,17 @@
-from pydantic import BaseModel, EmailStr, Field
-from datetime import datetime, timezone
+from pydantic import BaseModel, EmailStr
+from datetime import datetime
 
 class User(BaseModel): 
-    id : int
     name : str
     email : EmailStr
-    is_active : bool = True
-    is_admin : bool = False
-    password : str
-    hashed_password : str
-    is_verified : bool = False
-    created_at : datetime = Field(default_factory=lambda : datetime.now(timezone.utc))
-    updated_at : datetime = Field(default_factory=lambda : datetime.now(timezone.utc))
 
 class UserCreate(User):
-    pass
+    password : str
 
 class UserOut(User):
-    pass
+    id : int
+    is_active : bool = True
+    is_admin : bool = False
+    is_verified : bool = False
+    created_at : datetime 
+    updated_at : datetime
