@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.schema.user import UserOut, UserCreate
-from app.services.auth_service import create_user, authenticate_user, create_tokens
+from app.services.auth_service import create_user, authenticate_user, create_tokens, verify_refresh_token
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import JSONResponse
 
@@ -24,3 +24,13 @@ def login(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = 
     response = JSONResponse(content={"access_token": token["access_token"]})
     response.set_cookie("refresh_token", token["refresh_token"], httponly=True, secure=True, samesite="lax")
     return response
+
+@router.post("/refresh")
+def refresh(request: Request, db: Session = Depends(get_db)):
+    token = request.cookies.get("refresh_token")
+    if not token:
+        raise HTTPException(status_code=401, detail="Missing refresh token")
+    user = verify_refresh_token(db, token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid or expired refresh token")
+    return create_tokens(db, user)
