@@ -1,11 +1,14 @@
+from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.schema.user import UserCreate
 from app.db.models.user import Users
 from app.db.models.refresh_token import RefreshToken
 from app.utils.hashing import hash_password, verify_password
-from app.utils.jwt_manager import create_access_token
+from app.utils.jwt_manager import create_access_token, decode_token
 from datetime import datetime, timedelta, timezone
 from app.config.settings import settings
+from app.db.session import get_db
+from app.utils.security import oauth_scheme
 import uuid
 
 def create_user(db:Session, user: UserCreate):
@@ -55,3 +58,12 @@ def verify_refresh_token(db: Session, token: str):
             db_user = db.query(Users).filter(Users.id == db_token.user_id).first()
             return db_user
     return None
+
+def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth_scheme)):
+    payload = decode_token(token)
+    if not payload:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    user = db.query(Users).filter(Users.id == int(payload.get("sub"))).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="user not found")
+    return user
