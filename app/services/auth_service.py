@@ -46,3 +46,12 @@ def create_tokens(db: Session, user: Users):
         "refresh_token" : refresh_token_str,
         "token" : "bearer"
     }
+
+def verify_refresh_token(db: Session, token: str):
+    db_token = db.query(RefreshToken).filter(RefreshToken.token == token).first()
+    if db_token and not db_token.revoked:
+        expires = db_token.expires_at
+        if expires > datetime.now(timezone.utc):
+            db_user = db.query(Users).filter(Users.id == db_token.user_id).first()
+            return db_user
+    return None
