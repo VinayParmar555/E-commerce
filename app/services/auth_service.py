@@ -7,6 +7,7 @@ from app.utils.hashing import hash_password, verify_password
 from app.utils.jwt_manager import (
     create_access_token, 
     decode_token, 
+    verify_token_and_get_user_id, 
     create_email_verification_token
 )
 from datetime import datetime, timedelta, timezone
@@ -77,3 +78,16 @@ def email_verification_process(user: Users):
     link = f"http://localhost:8000/app/verify?token={token}"
     print (f"Verify your email: {link}")
     return {"msg" : "email verification link sent"}
+
+def verify_email_token(db: Session, token: str):
+    user_id = verify_token_and_get_user_id(token, "verify")
+    if not user_id:
+        raise HTTPException(status_code=400, detail="Invalid or expired token")
+    db_user = db.query(Users).filter(Users.id == user_id).first()
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    db_user.is_verified = True
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return {"msg" : "Email verified successfully"}
