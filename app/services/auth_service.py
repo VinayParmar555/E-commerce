@@ -4,7 +4,11 @@ from app.schema.user import UserCreate
 from app.db.models.user import Users
 from app.db.models.refresh_token import RefreshToken
 from app.utils.hashing import hash_password, verify_password
-from app.utils.jwt_manager import create_access_token, decode_token
+from app.utils.jwt_manager import (
+    create_access_token, 
+    decode_token, 
+    create_email_verification_token
+)
 from datetime import datetime, timedelta, timezone
 from app.config.settings import settings
 from app.db.session import get_db
@@ -67,3 +71,9 @@ def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth_s
     if not user:
         raise HTTPException(status_code=404, detail="user not found")
     return user
+
+def email_verification_process(user: Users):
+    token = create_email_verification_token(user.id)
+    link = f"http://localhost:8000/app/verify?token={token}"
+    print (f"Verify your email: {link}")
+    return {"msg" : "email verification link sent"}
