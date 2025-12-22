@@ -29,8 +29,8 @@ def create_email_verification_token(user_id: int):
     to_encode = {"sub" : str(user_id), "type":"verify", "exp":expires}
     return jwt.encode(to_encode, settings.JWT_EMAIL_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
 
-def verify_token(token: str):
+def verify_token_and_get_user_id(token: str, token_type: str):
     payload = jwt.decode(token, settings.JWT_EMAIL_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
-    if not payload:
+    if not payload or payload.get("type") != token_type:
         return False
-    return {"msg" : "Email verified successfully"}
+    return int(payload.get("sub"))
