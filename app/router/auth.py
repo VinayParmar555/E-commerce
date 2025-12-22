@@ -2,7 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.schema.user import UserOut, UserCreate
-from app.services.auth_service import create_user, authenticate_user, create_tokens, verify_refresh_token, get_current_user
+from app.services.auth_service import (
+    create_user, 
+    authenticate_user, 
+    create_tokens, 
+    verify_refresh_token,  
+    email_verification_process)
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import JSONResponse
 
@@ -34,7 +39,3 @@ def refresh(request: Request, db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=401, detail="Invalid or expired refresh token")
     return create_tokens(db, user)
-
-@router.get("/me", response_model=UserOut)
-def me(user = Depends(get_current_user)):
-    return user
