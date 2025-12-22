@@ -9,6 +9,7 @@ from app.services.auth_service import (
     verify_refresh_token,  
     email_verification_process,
     get_current_user,
+    verify_email_token
 )
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.responses import JSONResponse
@@ -45,3 +46,7 @@ def refresh(request: Request, db: Session = Depends(get_db)):
 @router.post("/verify-request")
 def send_verification_link(user = Depends(get_current_user)):
     return email_verification_process(user)
+
+@router.get("/verify")
+def verify_email(token: str, db: Session = Depends(get_db)):
+    return verify_email_token(db, token)
