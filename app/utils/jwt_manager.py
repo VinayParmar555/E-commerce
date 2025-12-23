@@ -42,3 +42,12 @@ def create_password_reset_token(user_id: int):
     expires = datetime.now(timezone.utc) + timedelta(minutes=settings.EMAIL_TOKEN_EXPIRE_MINUTES)
     to_encode = {"sub" : str(user_id), "type":"reset", "exp":expires}
     return jwt.encode(to_encode, settings.JWT_EMAIL_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
+
+def verify_rtoken_and_get_user_id(token: str, token_type: str):
+    try: 
+        payload = jwt.decode(token, settings.JWT_EMAIL_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+        if not payload or payload.get("type") != "reset":
+            return None
+        return int(payload.get("sub"))
+    except JWTError:
+        return None
