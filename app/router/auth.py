@@ -49,4 +49,9 @@ def send_verification_link(user = Depends(get_current_user)):
 
 @router.get("/verify")
 def verify_email(token: str, db: Session = Depends(get_db)):
-    return verify_email_token(db, token)
+    result = verify_email_token(db, token)
+    if result is None:
+        raise HTTPException(status_code=400, detail="Invalid or expired token")
+    if result is False:
+        raise HTTPException(status_code=404, detail="User not found")
+    return result
