@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from app.db.models.user import Users
 from app.utils.hashing import hash_password, verify_password
+from app.utils.jwt_manager import create_password_reset_token
 
 def change_password_process(db: Session, user:Users, old_password: str, new_password: str):
     password_verification = verify_password(old_password, user.hashed_password)
@@ -10,3 +11,12 @@ def change_password_process(db: Session, user:Users, old_password: str, new_pass
     db.commit()
     db.refresh(user)
     return {"msg" : "Password changed succesfully"}
+
+def reset_password_process(db: Session, email: str):
+    user = db.query(Users).filter(Users.email == email).first()
+    if not user:
+        return None
+    token = create_password_reset_token(user.id)
+    link = f"http://localhost:8000/app/reset-password?token={token}"
+    print(link)
+    return {"msg" : "reset link sent successfully"}
