@@ -13,7 +13,6 @@ from app.utils.jwt_manager import (
 from datetime import datetime, timedelta, timezone
 from app.config.settings import settings
 from app.db.session import get_db
-from app.utils.security import oauth_scheme
 import uuid
 
 def create_user(db:Session, user: UserCreate):
@@ -63,15 +62,6 @@ def verify_refresh_token(db: Session, token: str):
             db_user = db.query(Users).filter(Users.id == db_token.user_id).first()
             return db_user
     return None
-
-def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth_scheme)):
-    payload = decode_token(token)
-    if not payload:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    user = db.query(Users).filter(Users.id == int(payload.get("sub"))).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="user not found")
-    return user
 
 def email_verification_process(user: Users):
     token = create_email_verification_token(user.id)
