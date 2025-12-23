@@ -1,12 +1,12 @@
 from fastapi import APIRouter,HTTPException, Depends
 from sqlalchemy.orm import Session
-from app.db.session import get_db
+from app.deps.db import get_db
 from app.schema.user import UserOut
-from app.services.auth_service import get_current_user
+from app.deps.auth import get_current_user
 from app.services.user_service import change_password_process
 from app.db.models.user import Users
 
-router = APIRouter(prefix="/profile", tags=["View Profile"])
+router = APIRouter(prefix="/profile", tags=["Profile"])
 
 @router.get("/me", response_model=UserOut)
 def me(user = Depends(get_current_user)):
