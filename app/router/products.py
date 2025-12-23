@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.db.session import get_db
+from app.deps.db import get_db
 from app.schema.products import ProductBase
 from app.services.product_service import (
     List_of_products, add_product, search_product, update_product, delete_product
