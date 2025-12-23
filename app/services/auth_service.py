@@ -1,4 +1,3 @@
-from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.schema.user import UserCreate
 from app.db.models.user import Users
@@ -6,13 +5,11 @@ from app.db.models.refresh_token import RefreshToken
 from app.utils.hashing import hash_password, verify_password
 from app.utils.jwt_manager import (
     create_access_token, 
-    decode_token, 
     verify_token_and_get_user_id, 
     create_email_verification_token
 )
 from datetime import datetime, timedelta, timezone
 from app.config.settings import settings
-from app.db.session import get_db
 import uuid
 
 def create_user(db:Session, user: UserCreate):
@@ -72,10 +69,10 @@ def email_verification_process(user: Users):
 def verify_email_token(db: Session, token: str):
     user_id = verify_token_and_get_user_id(token, "verify")
     if not user_id:
-        raise HTTPException(status_code=400, detail="Invalid or expired token")
+        return None
     db_user = db.query(Users).filter(Users.id == user_id).first()
     if not db_user:
-        raise HTTPException(status_code=404, detail="User not found")
+        return False
     db_user.is_verified = True
     db.commit()
     db.refresh(db_user)
