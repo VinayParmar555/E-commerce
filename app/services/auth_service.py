@@ -87,7 +87,6 @@ def verify_email_token(db: Session, token: str):
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
     db_user.is_verified = True
-    db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return {"msg" : "Email verified successfully"}
