@@ -19,14 +19,14 @@ router = APIRouter(prefix="/account", tags=["Account"])
 @router.post("/register", response_model=UserOut)
 def register(user : UserCreate, db:Session = Depends(get_db)):
     db_user = create_user(db, user)
-    if db_user is False:
+    if not db_user:
         raise HTTPException(status_code=400, detail="E-mail already registered")
     return db_user
 
 @router.post("/login")
 def login(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
     db_user = authenticate_user(db, form_data.username, form_data.password)
-    if db_user is None:
+    if not db_user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     token = create_tokens(db, db_user)
     response = JSONResponse(content={"access_token": token["access_token"]})
