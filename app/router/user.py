@@ -19,11 +19,11 @@ def change_password(old_password: str, new_password: str, db: Session = Depends(
         raise HTTPException(status_code=404, detail="Invalid password")
     return changed_password
 
-@router.get("/reset-link")
-def reset_link(email: str, db: Session = Depends(get_db)):
+@router.post("/forgot-password")
+def forgot_password(email: str, db: Session = Depends(get_db)):
     result = reset_password_process(db, email)
     if not result:
-        raise HTTPException(status_code=404, detail="Invalid email")
+        raise HTTPException(status_code=400, detail="Email not registered")
     return result
 
 @router.post("/set-password")
