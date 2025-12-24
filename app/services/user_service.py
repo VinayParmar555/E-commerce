@@ -32,3 +32,14 @@ def verify_rtoken(db: Session, token: str, new_password: str):
     db.commit()
     db.refresh(user)
     return {"msg" : "password changed successfully"}
+
+def promote_admin(db: Session, user_id: int):
+    user = db.get(Users, user_id)
+    if not user:
+        return None
+    if user.is_admin:
+        return False
+    user.is_admin = True
+    db.commit()
+    db.refresh(user)
+    return {"msg" : f"{user.name} promoted to admin successfully"}
