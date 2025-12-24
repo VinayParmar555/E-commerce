@@ -12,12 +12,12 @@ router = APIRouter(prefix="/profile", tags=["Profile"])
 def me(user = Depends(get_current_user)):
     return user
 
-@router.post("/change-password")
+@router.put("/change-password")
 def change_password(old_password: str, new_password: str, db: Session = Depends(get_db), user:Users = Depends(get_current_user)):
-    changed_password = change_password_process(db, user, old_password, new_password)
-    if not changed_password:
-        raise HTTPException(status_code=404, detail="Invalid password")
-    return changed_password
+    result = change_password_process(db, user, old_password, new_password)
+    if not result:
+        raise HTTPException(status_code=400, detail="Incorrect old password")
+    return result
 
 @router.post("/forgot-password")
 def forgot_password(email: str, db: Session = Depends(get_db)):
