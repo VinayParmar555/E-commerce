@@ -1,9 +1,16 @@
-from fastapi import APIRouter,HTTPException, Depends
+from fastapi import APIRouter,HTTPException, Depends, Request
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from app.deps.db import get_db
 from app.schema.user import UserOut
 from app.deps.auth import get_current_user
-from app.services.user_service import change_password_process, reset_password_process, verify_rtoken, promote_admin
+from app.services.user_service import (
+    change_password_process, 
+    reset_password_process, 
+    verify_rtoken, 
+    promote_admin, 
+    revoke_token
+)
 from app.db.models.user import Users
 
 router = APIRouter(prefix="/profile", tags=["Profile"])
@@ -45,3 +52,15 @@ def make_admin(user_id: int, db: Session = Depends(get_db), current_user: Users 
     if result is False:
         raise HTTPException(status_code=400, detail="user is already admin")
     return result
+
+@router.post("/logout")
+def logout(request: Request, db:Session = Depends(get_db)):
+    token = request.cookies.get("refresh_token")
+    if not token:
+        raise HTTPException(status_code=401, detail="not logged in")
+    revoked = revoke_token(db, token)
+    if not revoked:
+        raise HTTPException(status_code=404, detail="refresh token not found")
+    response = JSONResponse(content={"detail" : "Logged out successfully"})
+    response.delete_cookie("refresh_token")
+    return response
