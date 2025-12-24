@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from app.db.models.user import Users
+from app.db.models.refresh_token import RefreshToken
 from app.utils.hashing import hash_password, verify_password
 from app.utils.jwt_manager import create_password_reset_token, verify_rtoken_and_get_user_id
 
@@ -43,3 +44,12 @@ def promote_admin(db: Session, user_id: int):
     db.commit()
     db.refresh(user)
     return {"msg" : f"{user.name} promoted to admin successfully"}
+
+def revoke_token(db:Session, token: str):
+    db_token = db.query(RefreshToken).filter(RefreshToken.token == token).first()
+    if not db_token:
+        return False
+    db_token.revoked = True
+    db.commit()
+    db.refresh(db_token)
+    return True
