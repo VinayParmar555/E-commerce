@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from app.deps.db import get_db
 from app.schema.user import UserOut
 from app.deps.auth import get_current_user
-from app.services.user_service import change_password_process, reset_password_process, verify_rtoken
+from app.services.user_service import change_password_process, reset_password_process, verify_rtoken, promote_admin
 from app.db.models.user import Users
 
 router = APIRouter(prefix="/profile", tags=["Profile"])
@@ -33,4 +33,15 @@ def set_new_password(new_password:str, token:str, db: Session = Depends(get_db))
         raise HTTPException(status_code=401, detail="Invalid or expired token")
     if result is None:
         raise HTTPException(status_code=404, detail="user not found")
+    return result
+
+@router.post("/make-admin")
+def make_admin(user_id: int, db: Session = Depends(get_db), current_user: Users =Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    result = promote_admin(db, user_id)
+    if result is None:
+        raise HTTPException(status_code=404, detail="user not found")
+    if result is False:
+        raise HTTPException(status_code=400, detail="user is already admin")
     return result
