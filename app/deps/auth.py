@@ -11,7 +11,8 @@ def get_current_user(db: Session = Depends(get_db), token: str = Depends(oauth_s
     payload = decode_token(token)
     if not payload:
         raise HTTPException(status_code=401, detail="Invalid credentials")
-    user = db.query(Users).filter(Users.id == int(payload.get("sub"))).first()
+    user_id = int(payload.get("sub"))
+    user = db.get(Users, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="user not found")
     return user
