@@ -9,7 +9,9 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     REFRESH_TOKEN_EXPIRE_DAYS: int
     EMAIL_TOKEN_EXPIRE_MINUTES: int
-    # REDIS_URL: str
+    REDIS_HOST: str
+    REDIS_PORT: int
+    REDIS_DB: int
     
     class Config:
         env_file = ".env"
