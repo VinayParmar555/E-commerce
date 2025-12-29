@@ -3,9 +3,9 @@ from app.db.models.products import Product
 from app.schema.products import ProductBase
 
 def List_of_products(db:Session):
-    
     db_products = db.query(Product).all()
-    
+    if not db_products:
+        return False
     return db_products
 
 def search_product(db:Session, id: int):
@@ -31,7 +31,7 @@ def update_product(db:Session, id: int, product: ProductBase):
         db_product.quantity = product.quantity
         db.commit()
         db.refresh(db_product)
-        return "Product Updated"
+        return {"msg" : "Product Updated successfully"}
 
     return False
 
@@ -42,5 +42,4 @@ def delete_product( db:Session, id: int):
     
     db.delete(db_product)
     db.commit()
-    return {"detail" : "Product Deleted"}
-
+    return {"detail" : "Product Deleted successfully"}
