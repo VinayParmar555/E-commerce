@@ -23,3 +23,7 @@ def get_cached_products(db:Session):
     ]
     redis_client.set(cache_key, json.dumps(result), ex=60 * 5)
     return result
+
+def delete_cached_product(product_id:int):
+    redis_client.delete("products:list")
+    redis_client.delete(f"product:{product_id}")
