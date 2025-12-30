@@ -7,7 +7,7 @@ from app.db.models.user import Users
 from app.services.product_service import (
     add_product, search_product, update_product, delete_product
 )
-from app.cache.cache_service import get_cached_products
+from app.cache.cache_service import get_cached_products, delete_cached_product
 
 router = APIRouter(prefix="/products", tags=["Operations"])
 
@@ -30,6 +30,7 @@ def add_new_product(product:ProductBase, db:Session = Depends(get_db), current_u
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admins Only")
     db_product = add_product(db, product)
+    delete_cached_product(db_product.id)
     if not db_product:
         raise HTTPException(status_code=400, detail="Unable to add product")
     return db_product
@@ -39,6 +40,7 @@ def update_existing_product(id: int, product: ProductBase, db:Session = Depends(
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admins Only")
     db_product = update_product(db, id, product)
+    delete_cached_product(id)
     if not db_product:
         raise HTTPException(status_code=404, detail="Product not found")
     return db_product
@@ -48,6 +50,7 @@ def delete_existing_product(id: int, db:Session = Depends(get_db), current_user:
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admins Only")                           
     db_product = delete_product(db, id)
+    delete_cached_product(id)
     if not db_product:
         raise HTTPException(status_code=404, detail="Product not found")
     return db_product
