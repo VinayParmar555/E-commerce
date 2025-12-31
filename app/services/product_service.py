@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from app.db.models.products import Product
 from app.schema.products import ProductBase
+from typing import List
 
 def List_of_products(db:Session):
     db_products = db.query(Product).all()
@@ -15,7 +16,6 @@ def search_product(db:Session, id: int):
     return db_product
 
 def add_product(db: Session, product: ProductBase):
-
     db_product = Product(**product.model_dump())
     db.add(db_product)
     db.commit()
@@ -31,15 +31,21 @@ def update_product(db:Session, id: int, product: ProductBase):
         db_product.quantity = product.quantity
         db.commit()
         db.refresh(db_product)
-        return {"msg" : "Product Updated successfully"}
-
+        return db_product
     return False
 
-def delete_product( db:Session, id: int):                            
+def delete_product(db:Session, id: int):                            
     db_product = db.get(Product, id)
     if not db_product:
         return False
-    
     db.delete(db_product)
     db.commit()
-    return {"detail" : "Product Deleted successfully"}
+    return db_product
+
+def add_bulk_products(db:Session, product:List[ProductBase]):
+    db_products = [Product(**p.model_dump()) for p in product]
+    if not db_products:
+        return False
+    db.bulk_save_objects(db_products)
+    db.commit()
+    return db_products
