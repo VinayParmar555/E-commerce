@@ -33,7 +33,7 @@ def add_new_product(product:ProductBase, db:Session = Depends(get_db), current_u
     delete_cached_product(db_product.id)
     if not db_product:
         raise HTTPException(status_code=400, detail="Unable to add product")
-    return db_product
+    return {"msg" : "Product added successfully"}
 
 @router.put("/{id}")
 def update_existing_product(id: int, product: ProductBase, db:Session = Depends(get_db), current_user:Users = Depends(get_current_user)):
