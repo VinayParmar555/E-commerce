@@ -8,6 +8,7 @@ from app.services.product_service import (
     add_product, search_product, update_product, delete_product
 )
 from app.cache.cache_service import get_cached_products, delete_cached_product
+from app.cache.redis_client import redis_client
 
 router = APIRouter(prefix="/products", tags=["Operations"])
 
@@ -30,9 +31,9 @@ def add_new_product(product:ProductBase, db:Session = Depends(get_db), current_u
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admins Only")
     db_product = add_product(db, product)
-    delete_cached_product(db_product.id)
     if not db_product:
         raise HTTPException(status_code=400, detail="Unable to add product")
+    redis_client.delete("products:list")
     return {"msg" : "Product added successfully"}
 
 @router.put("/{id}")
@@ -40,9 +41,9 @@ def update_existing_product(id: int, product: ProductBase, db:Session = Depends(
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admins Only")
     db_product = update_product(db, id, product)
-    delete_cached_product(id)
     if not db_product:
         raise HTTPException(status_code=404, detail="Product not found")
+    delete_cached_product(id)
     return db_product
 
 @router.delete("/{id}")        
@@ -50,7 +51,7 @@ def delete_existing_product(id: int, db:Session = Depends(get_db), current_user:
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admins Only")                           
     db_product = delete_product(db, id)
-    delete_cached_product(id)
     if not db_product:
         raise HTTPException(status_code=404, detail="Product not found")
+    delete_cached_product(id)
     return db_product
