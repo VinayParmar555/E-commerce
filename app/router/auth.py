@@ -17,14 +17,14 @@ from fastapi.responses import JSONResponse
 router = APIRouter(prefix="/account", tags=["Account"])
 
 @router.post("/register", response_model=UserOut)
-def register(user : UserCreate, db:Session = Depends(get_db)):
+async def register(user : UserCreate, db:Session = Depends(get_db)):
     db_user = create_user(db, user)
     if not db_user:
         raise HTTPException(status_code=400, detail="E-mail already registered")
     return db_user
 
 @router.post("/login")
-def login(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
+async def login(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = Depends()):
     db_user = authenticate_user(db, form_data.username, form_data.password)
     if not db_user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
@@ -34,7 +34,7 @@ def login(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestForm = 
     return response
 
 @router.post("/refresh")
-def refresh(request: Request, db: Session = Depends(get_db)):
+async def refresh(request: Request, db: Session = Depends(get_db)):
     token = request.cookies.get("refresh_token")
     if not token:
         raise HTTPException(status_code=401, detail="Missing refresh token")
@@ -44,11 +44,11 @@ def refresh(request: Request, db: Session = Depends(get_db)):
     return create_tokens(db, user)
 
 @router.post("/verify-request")
-def send_verification_link(user = Depends(get_current_user)):
+async def send_verification_link(user = Depends(get_current_user)):
     return email_verification_process(user)
 
 @router.get("/verify")
-def verify_email(token: str, db: Session = Depends(get_db)):
+async def verify_email(token: str, db: Session = Depends(get_db)):
     result = verify_email_token(db, token)
     if result is None:
         raise HTTPException(status_code=400, detail="Invalid or expired token")
