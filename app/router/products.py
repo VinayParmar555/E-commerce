@@ -14,21 +14,21 @@ from app.cache.redis_client import redis_client
 router = APIRouter(prefix="/products", tags=["Operations"])
 
 @router.get("/")
-def List_of_existing_products(db:Session = Depends(get_db)):
+async def List_of_existing_products(db:Session = Depends(get_db)):
     db_products = get_cached_products(db)
     if not db_products:
         raise HTTPException(status_code=404, detail="Products not found")
     return db_products
 
 @router.get("/{id}")
-def search_existing_product(id: int, db:Session = Depends(get_db)) -> ProductBase:
+async def search_existing_product(id: int, db:Session = Depends(get_db)) -> ProductBase:
     db_product = search_product(db, id)
     if not db_product:
         raise HTTPException(status_code=404, detail="Product not found")
     return db_product
 
 @router.post("/")
-def add_new_product(product:ProductBase, db:Session = Depends(get_db), current_user:Users = Depends(get_current_user)):
+async def add_new_product(product:ProductBase, db:Session = Depends(get_db), current_user:Users = Depends(get_current_user)):
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admins Only")
     db_product = add_product(db, product)
@@ -38,7 +38,7 @@ def add_new_product(product:ProductBase, db:Session = Depends(get_db), current_u
     return {"msg" : "Product added successfully"}
 
 @router.put("/{id}")
-def update_existing_product(id: int, product: ProductBase, db:Session = Depends(get_db), current_user:Users = Depends(get_current_user)):
+async def update_existing_product(id: int, product: ProductBase, db:Session = Depends(get_db), current_user:Users = Depends(get_current_user)):
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admins Only")
     db_product = update_product(db, id, product)
@@ -48,7 +48,7 @@ def update_existing_product(id: int, product: ProductBase, db:Session = Depends(
     return {"msg" : "Product Updated successfully"}
 
 @router.delete("/{id}")        
-def delete_existing_product(id: int, db:Session = Depends(get_db), current_user:Users = Depends(get_current_user)):
+async def delete_existing_product(id: int, db:Session = Depends(get_db), current_user:Users = Depends(get_current_user)):
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admins Only")                           
     db_product = delete_product(db, id)
@@ -58,7 +58,7 @@ def delete_existing_product(id: int, db:Session = Depends(get_db), current_user:
     return {"detail" : "Product Deleted successfully"}
 
 @router.post("/bulk_products")
-def add_new_bulk_products(product:List[ProductBase], db:Session=Depends(get_db), current_user:Users = Depends(get_current_user)):
+async def add_new_bulk_products(product:List[ProductBase], db:Session=Depends(get_db), current_user:Users = Depends(get_current_user)):
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admins Only")                           
     db_product = add_bulk_products(db, product)
