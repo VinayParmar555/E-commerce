@@ -41,7 +41,10 @@ async def refresh(request: Request, db: Session = Depends(get_db)):
     user = verify_refresh_token(db, token)
     if not user:
         raise HTTPException(status_code=401, detail="Invalid or expired refresh token")
-    return create_tokens(db, user)
+    new_token = create_tokens(db, user)
+    response = JSONResponse(content={"msg":"Token refreshed successfully", "access_token":new_token["access_token"]})
+    response.set_cookie("refresh_token", new_token["refresh_token"], httponly=True, secure=True, samesite="lax")
+    return response
 
 @router.post("/verify-request")
 async def send_verification_link(user = Depends(get_current_user)):
