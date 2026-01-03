@@ -56,5 +56,5 @@ async def verify_email(token: str, db: Session = Depends(get_db)):
     if result is None:
         raise HTTPException(status_code=400, detail="Invalid or expired token")
     if result is False:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=401, detail="user not found or account already verified")
     return result
