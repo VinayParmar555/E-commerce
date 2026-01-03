@@ -71,7 +71,7 @@ def verify_email_token(db: Session, token: str):
     if not user_id:
         return None
     db_user = db.query(Users).filter(Users.id == user_id).first()
-    if not db_user:
+    if not db_user or db_user.is_verified:
         return False
     db_user.is_verified = True
     db.commit()
