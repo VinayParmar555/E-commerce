@@ -31,6 +31,7 @@ async def login(db: Session = Depends(get_db), form_data: OAuth2PasswordRequestF
     token = create_tokens(db, db_user)
     response = JSONResponse(content={"access_token": token["access_token"]})
     response.set_cookie("refresh_token", token["refresh_token"], httponly=True, secure=True, samesite="lax")
+    response.set_cookie("access_token", token["access_token"], httponly=True, secure=True, samesite="lax")
     return response
 
 @router.post("/refresh")
