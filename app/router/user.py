@@ -63,4 +63,5 @@ async def logout(request: Request, db:Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="refresh token not found")
     response = JSONResponse(content={"detail" : "Logged out successfully"})
     response.delete_cookie("refresh_token")
+    response.delete_cookie("access_token")
     return response
