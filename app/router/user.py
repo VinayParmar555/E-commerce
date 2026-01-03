@@ -24,14 +24,14 @@ async def change_password(old_password: str, new_password: str, db: Session = De
     result = change_password_process(db, user, old_password, new_password)
     if not result:
         raise HTTPException(status_code=400, detail="Incorrect old password")
-    return result
+    return {"msg" : "Password changed succesfully"}
 
 @router.post("/forgot-password")
 async def forgot_password(email: str, db: Session = Depends(get_db)):
     result = reset_password_process(db, email)
     if not result:
         raise HTTPException(status_code=400, detail="Email not registered")
-    return result
+    return {"msg" : "reset link sent successfully"}
 
 @router.post("/set-password")
 async def set_new_password(new_password:str, token:str, db: Session = Depends(get_db)):
@@ -40,7 +40,7 @@ async def set_new_password(new_password:str, token:str, db: Session = Depends(ge
         raise HTTPException(status_code=401, detail="Invalid or expired token")
     if result is None:
         raise HTTPException(status_code=404, detail="user not found")
-    return result
+    return {"msg" : "password changed successfully"}
 
 @router.post("/make-admin")
 async def make_admin(user_id: int, db: Session = Depends(get_db), current_user: Users =Depends(get_current_user)):
@@ -51,7 +51,7 @@ async def make_admin(user_id: int, db: Session = Depends(get_db), current_user: 
         raise HTTPException(status_code=404, detail="user not found")
     if result is False:
         raise HTTPException(status_code=400, detail="user is already admin")
-    return result
+    return {"msg" : f"user {user_id} promoted to admin successfully"}
 
 @router.post("/logout")
 async def logout(request: Request, db:Session = Depends(get_db)):
