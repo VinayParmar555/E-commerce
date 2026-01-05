@@ -13,3 +13,4 @@ class Product(Base):
     quantity = Column(Integer)
 
     cart_items = relationship("Cart", back_populates="product")
+    category = relationship("Category", back_populates="products")
