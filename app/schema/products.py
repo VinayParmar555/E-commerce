@@ -13,4 +13,4 @@ class ProductCreate(ProductBase):
     pass
 
 class ProductRead(ProductBase):
-    pass
+    category_id : int
