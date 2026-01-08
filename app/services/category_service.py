@@ -16,3 +16,12 @@ def get_categories(db:Session) -> CategoryCreate:
     if not result:
         return False
     return result
+
+def update_category(db:Session, id:int, new_category:CategoryBase):
+    db_category = db.get(Category, id)
+    if not db_category:
+        return False
+    db_category.name = new_category.name
+    db.commit()
+    db.refresh(db_category)
+    return db_category
