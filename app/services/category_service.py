@@ -25,3 +25,11 @@ def update_category(db:Session, id:int, new_category:CategoryBase):
     db.commit()
     db.refresh(db_category)
     return db_category
+
+def delete_category(db:Session, id:int):
+    db_category = db.get(Category, id)
+    if not db_category:
+        return False
+    db.delete(db_category)
+    db.commit()
+    return True
