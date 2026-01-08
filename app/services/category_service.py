@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app.schema.category import CategoryBase
+from app.schema.category import CategoryBase, CategoryCreate
 from app.db.models.category import Category
 
 def add_categories(db:Session, category:CategoryBase):
@@ -11,7 +11,7 @@ def add_categories(db:Session, category:CategoryBase):
     db.refresh(db_category)
     return db_category
 
-def get_categories(db:Session):
+def get_categories(db:Session) -> CategoryCreate:
     result = db.query(Category).all()
     if not result:
         return False
