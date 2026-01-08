@@ -34,7 +34,7 @@ async def update_existing_category(new_category:CategoryBase, id:int, db:Session
         raise HTTPException(status_code=404, detail="category not found")
     return {"msg" : "category updated successfully"}
 
-@router.delete("/delete_category")
+@router.delete("/delete_category/{id}")
 async def delete_existing_category(id:int, db:Session=Depends(get_db), current_user:Users=Depends(get_current_user)):
     if not current_user.is_admin:
         raise HTTPException(status_code=401, detail="Admins only!")
