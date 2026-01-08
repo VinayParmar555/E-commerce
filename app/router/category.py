@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.deps.auth import get_current_user
 from app.deps.db import get_db
 from app.db.models.user import Users
-from app.services.category_service import add_categories, get_categories
+from app.services.category_service import add_categories, get_categories, update_category
 
 router = APIRouter(prefix="/Categories", tags=["Category"])
 
@@ -19,8 +19,17 @@ async def add_new_category(category:CategoryBase, db:Session=Depends(get_db), cu
     return {"msg" : "Category added successfully"}
 
 @router.get("/see_all_categories")
-def see_categories(db:Session=Depends(get_db)):
+async def see_categories(db:Session=Depends(get_db)):
     result = get_categories(db)
     if not result:
         raise HTTPException(status_code=404, detail="Category not found")
     return result
+
+@router.put("/update_category")
+async def update_existing_category(new_category:CategoryBase, id:int, db:Session=Depends(get_db), current_user:Users=Depends(get_current_user)):
+    if not current_user.is_active:
+        raise HTTPException(status_code=401, detail="Admins only!")
+    db_category = update_category(db, id, new_category)
+    if not db_category:
+        raise HTTPException(status_code=404, detail="category not found")
+    return {"msg" : "category updated successfully"}
