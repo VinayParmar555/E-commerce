@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.deps.auth import get_current_user
 from app.deps.db import get_db
 from app.db.models.user import Users
-from app.services.category_service import add_categories, get_categories, update_category
+from app.services.category_service import add_categories, get_categories, update_category, delete_category
 
 router = APIRouter(prefix="/Categories", tags=["Category"])
 
@@ -33,3 +33,12 @@ async def update_existing_category(new_category:CategoryBase, id:int, db:Session
     if not db_category:
         raise HTTPException(status_code=404, detail="category not found")
     return {"msg" : "category updated successfully"}
+
+@router.delete("/delete_category")
+async def delete_existing_category(id:int, db:Session=Depends(get_db), current_user:Users=Depends(get_current_user)):
+    if not current_user.is_admin:
+        raise HTTPException(status_code=401, detail="Admins only!")
+    result = delete_category(db, id)
+    if not result:
+        raise HTTPException(status_code=404, detail="category not found")    
+    return {"msg" : "category deleted successfully"}
