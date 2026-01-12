@@ -5,18 +5,14 @@ Minimal instructions to run this **e-commerce backend API**
 
 ---
 
-## 1. Prerequisites
+## ✅ Prerequisites
 
-- Install **Docker Desktop** (includes Docker Compose v2)
-- Expose the following local ports as free:
-  - **8000** (backend API)
-  - **5432** (PostgreSQL)
-  - **6379** (Redis)
+- Docker
+- Docker Compose
 
 ---
 
-## 2. Clone
+## 📦 Pull Application Image from Docker Hub
 
 ```bash
-git clone <repo-url>
-cd ecommerce-backend
+docker pull ryzenfinances/e-commerce:1.0
