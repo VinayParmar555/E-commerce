@@ -1,22 +1,85 @@
-# E-commerce Backend
+# E-Commerce Backend
 
-Minimal instructions to run this **e-commerce backend API**  
-(**FastAPI + PostgreSQL + Redis**) using **Docker** on any machine.
-
----
-
-## 1. Prerequisites
-
-- Install **Docker Desktop** (includes Docker Compose v2)
-- Expose the following local ports as free:
-  - **8000** (backend API)
-  - **5432** (PostgreSQL)
-  - **6379** (Redis)
+A production-ready **FastAPI backend** built with **PostgreSQL**, **Redis**, and **Docker**.  
+The application is fully containerized and deployed on **Render**.
 
 ---
 
-## 2. Clone
+## Here we go
 
+You can run this project in two ways:
+
+1. **Local Development (Docker)**
+2. **Production (Deployed on Render)**
+
+---
+
+##  Local Development (Docker)
+
+### Prerequisites
+- Docker
+- Docker Compose
+
+---
+
+### 1. Clone the Repository
 ```bash
-git clone <repo-url>
-cd ecommerce-backend
+git clone <your-repo-url>
+cd e-commerce-backend
+```
+
+### 2. Create environment variables
+```bash
+DATABASE_URL=postgresql://postgres:postgres@postgres:5432/your_db_name
+
+POSTGRES_DB=your_db_name
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_DB=0
+
+JWT_SECRET_KEY=your_secret
+JWT_REFRESH_SECRET_KEY=your_refresh_secret
+JWT_EMAIL_SECRET_KEY=your_email_secret
+ACCESS_TOKEN_EXPIRE_MINUTES=15
+REFRESH_TOKEN_EXPIRE_DAYS=7
+EMAIL_TOKEN_EXPIRE_MINUTES=10
+```
+### 3. Start the development server
+```bash
+docker compose up -d
+```
+This will start your:
+- FastAPI application
+- PostgreSQL database
+- Redis cache
+### 4. Run the Application (Swagger API Docs)
+```bash
+http://localhost:8000/docs
+```
+### 5. View logs
+```bash
+docker compose logs -f app
+```
+### 6. Stop the application
+```bash
+docker compose down
+```
+This stops containers but keeps database data intact.
+
+### 7. Production Deployment (Render)
+The application is deployed on Render using a Docker image pushed to Docker Hub.
+```bash
+https://vinaystore.onrender.com/docs
+```
+
+
+
+
+
+
+
+
+
