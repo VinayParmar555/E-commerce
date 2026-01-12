@@ -30,9 +30,9 @@ cd e-commerce-backend
 
 ### 2. Create environment variables
 ```bash
-DATABASE_URL=postgresql://postgres:postgres@postgres:5432/HONEY
+DATABASE_URL=postgresql://postgres:postgres@postgres:5432/your_db_name
 
-POSTGRES_DB=HONEY
+POSTGRES_DB=your_db_name
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 
