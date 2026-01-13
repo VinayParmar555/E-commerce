@@ -12,7 +12,6 @@ class Settings(BaseSettings):
     REDIS_HOST: str
     REDIS_PORT: int
     REDIS_DB: int
-    REDIS_URL: str
     DATABASE_NAME: str
     DATABASE_USER: str
     DATABASE_PWD: str
