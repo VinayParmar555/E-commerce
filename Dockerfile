@@ -15,7 +15,7 @@ set -e\n\
 echo "Running Alembic migrations..."\n\
 python -m alembic upgrade head\n\
 echo "Starting FastAPI..."\n\
-exec python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT\n' > /start.sh \
+exec python -m uvicorn main:app --host 0.0.0.0 --port $PORT\n' > /start.sh \
  && chmod +x /start.sh
 
 CMD ["/start.sh"]
