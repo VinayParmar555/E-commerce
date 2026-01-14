@@ -13,14 +13,14 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision: str = 'b753e2f6ab31'
-down_revision: Union[str, Sequence[str], None] = '021b68fadc14'
+down_revision: Union[str, Sequence[str], None] = 'f2a3135a19da'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
     op.create_table(
-        "product",
+        "products",
         sa.Column("id", sa.Integer(), primary_key=True, index=True, nullable=False),
         sa.Column("name", sa.String(), nullable=False),
         sa.Column("price", sa.Float(), nullable=False),
@@ -30,4 +30,4 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_table("product")
+    op.drop_table("products")
