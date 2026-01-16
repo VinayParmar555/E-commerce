@@ -67,7 +67,7 @@ docker compose logs -f app
 ```bash
 docker compose down
 ```
-This stops containers but keeps database data intact.
+This drops containers but keeps database data intact.
 
 ### 7. Production Deployment (Render)
 The application is deployed on Render using a Docker image pushed to Docker Hub.
