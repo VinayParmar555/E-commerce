@@ -10,7 +10,7 @@ class ProductUpdate(ProductBase):
     id : int
 
 class ProductCreate(ProductBase):
-    pass
+    category_id : int | None = None
 
 class ProductRead(ProductBase):
     category : str | None
