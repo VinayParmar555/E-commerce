@@ -16,7 +16,8 @@ def get_cached_products(db:Session):
             "name" : p.name,
             "price" : p.price,
             "description" : p.description,
-            "quantity" : p.quantity
+            "quantity" : p.quantity,
+            "category" : p.category.name if p.category else None
             
         }
         for p in products
