@@ -61,7 +61,7 @@ http://localhost:8000/docs
 ```
 ### 5. View logs
 ```bash
-docker compose logs -f app
+docker logs -f e-commerce_app
 ```
 ### 6. Stop the application
 ```bash
