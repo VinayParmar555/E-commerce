@@ -13,11 +13,12 @@ def search_product(db:Session, id:int):
     db_product = db.query(Product).options(joinedload(Product.category)).filter(Product.id==id).first()
     if not db_product:
         return False
-    return {"name": db_product.name,
-            "price": db_product.price,
-            "description": db_product.description,
-            "quantity": db_product.quantity,
-            "category": db_product.category
+    return {
+        "name": db_product.name,
+        "price": db_product.price,
+        "description": db_product.description,
+        "quantity": db_product.quantity,
+        "category": db_product.category
     }
 
 def add_product(db: Session, product:ProductCreate):
