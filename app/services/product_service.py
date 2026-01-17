@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session, joinedload
 from app.db.models.products import Product
-from app.schema.products import ProductRead
+from app.schema.products import ProductRead, ProductCreate
 from typing import List
 
 def List_of_products(db:Session):
@@ -9,20 +9,25 @@ def List_of_products(db:Session):
         return False
     return db_products
 
-def search_product(db:Session, id: int):
-    db_product = db.get(Product, id)
+def search_product(db:Session, id:int):
+    db_product = db.query(Product).options(joinedload(Product.category)).filter(Product.id==id).first()
     if not db_product:
         return False
-    return db_product
+    return {"name": db_product.name,
+            "price": db_product.price,
+            "description": db_product.description,
+            "quantity": db_product.quantity,
+            "category": db_product.category
+    }
 
-def add_product(db: Session, product: ProductRead):
+def add_product(db: Session, product:ProductCreate):
     db_product = Product(**product.model_dump())
     db.add(db_product)
     db.commit()
     db.refresh(db_product)
     return db_product
 
-def update_product(db:Session, id: int, product: ProductRead):
+def update_product(db:Session, id:int, product:ProductCreate):
     db_product = db.get(Product, id)
     if db_product:
         db_product.name = product.name
