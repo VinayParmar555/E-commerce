@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session, joinedload
 from app.db.models.products import Product
+from app.db.models.category import Category
 from app.schema.products import ProductRead, ProductCreate
 from typing import List
 
@@ -59,5 +60,30 @@ def add_bulk_products(db:Session, product:List[ProductRead]):
 
 def pagination_process(db:Session, page:int=1, limit:int=10):
     offset = (page-1)*limit
-    products = db.query(Product).order_by(Product.id.asc()).offset(offset).limit(limit).all()
+    products = db.query(Product).offset(offset).limit(limit).all()
+    return products
+
+def filter_products(
+        db:Session, 
+        category:str, 
+        name:str | None = None, 
+        min_price:int | None = None, 
+        max_price:int | None = None, 
+        limit:int=5, page:int=1
+    ):
+    stmt = db.query(Product).options(joinedload(Product.category))
+    filters=[]
+    if category:
+        stmt = stmt.join(Product.category)
+        filters.append(Category.name.ilike(f"%{category}%"))
+    if name:
+        filters.append(Product.name.ilike(f"%{name}%"))
+    if min_price is not None:
+        filters.append(Product.price>=min_price)
+    if max_price is not None:
+        filters.append(Product.price<=max_price)
+    if filters:
+        stmt = stmt.filter(*filters).distinct()
+    offset=(page-1)*limit
+    products=stmt.offset(offset).limit(limit).all()
     return products
