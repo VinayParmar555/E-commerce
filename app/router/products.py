@@ -6,7 +6,7 @@ from app.deps.auth import get_current_user
 from app.schema.products import ProductRead, ProductCreate
 from app.db.models.user import Users
 from app.services.product_service import (
-    add_product, search_product, update_product, delete_product, add_bulk_products, pagination_process
+    add_product, search_product, update_product, delete_product, add_bulk_products, pagination_process, filter_products
 )
 from app.cache.cache_service import get_cached_products, delete_cached_product
 from app.cache.redis_client import redis_client
@@ -67,7 +67,7 @@ async def add_new_bulk_products(product:List[ProductCreate], db:Session=Depends(
     redis_client.delete("products:list")
     return {"msg" : f"{len(db_product)} bulk products added successfully"}
 
-@router.get("/filter")
+@router.get("/pagination")
 async def paginated_product(page:int=Query(1, ge=1), limit:int=Query(10, ge=10, le=50), db:Session=Depends(get_db)):
     db_product = pagination_process(db, page, limit)
     return {
@@ -75,4 +75,22 @@ async def paginated_product(page:int=Query(1, ge=1), limit:int=Query(10, ge=10, 
         "limit":limit,
         "count":len(db_product),
         "data":db_product
+    }
+
+@router.get("/filter")
+async def filter_product(
+    category:str, 
+    name:str | None = None, 
+    min_price:int | None = None, 
+    max_price:int | None = None,
+    limit:int=Query(10, ge=10, le=50),
+    page:int=Query(1, ge=1),
+    db:Session=Depends(get_db)
+    ):
+    products = filter_products(db, category, name, min_price, max_price, limit, page)
+    return {
+        "page":page,
+        "limit":limit,
+        "count":len(products),
+        "data":products
     }
