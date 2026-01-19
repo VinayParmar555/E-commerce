@@ -9,6 +9,8 @@ router = APIRouter(prefix="/Cart", tags=["Cart"])
 @router.post("/add_cart")
 async def add_in_cart(cart_item:CartOut, db:Session=Depends(get_db)):
     cart = add_to_cart(db, cart_item)
-    if not cart:
+    if cart is None:
         raise HTTPException(status_code=404, detail="Insufficient stock")
+    if cart is False:
+        raise HTTPException(status_code=404, detail="user not found")
     return cart
