@@ -1,12 +1,16 @@
 from sqlalchemy.orm import Session
+from app.db.models.user import Users
 from app.schema.cart import CartOut
 from app.db.models.cart import Cart
 from app.db.models.products import Product
 
 def add_to_cart(db:Session, cart_item:CartOut):
     product = db.get(Product, cart_item.product_id)
-    if not product or product.quantity<=0:
+    if not product or product.quantity<=cart_item.quantity:
         return None
+    user = db.get(Users, cart_item.user_id)
+    if not user:
+        return False
     stmt = db.query(Cart).filter(Cart.user_id==cart_item.user_id, Cart.product_id==cart_item.product_id).first()
     if stmt:
         stmt.quantity+=cart_item.quantity
