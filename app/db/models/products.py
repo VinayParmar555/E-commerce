@@ -13,5 +13,5 @@ class Product(Base):
     quantity = Column(Integer)
     category_id = Column(Integer, ForeignKey("categories.id", onupdate="CASCADE", ondelete="CASCADE"), nullable=True)
 
-    # cart_items = relationship("Cart", back_populates="product")
+    cart_items = relationship("Cart", back_populates="product")
     category = relationship("Category", back_populates="products")
