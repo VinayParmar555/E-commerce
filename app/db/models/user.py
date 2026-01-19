@@ -1,4 +1,5 @@
 from sqlalchemy import String, Integer, Column, DateTime, Boolean, func
+from sqlalchemy.orm import relationship
 from app.db.base import Base
 
 class Users(Base):
@@ -24,3 +25,4 @@ class Users(Base):
         nullable=False
     )
 
+    cart = relationship("Cart", back_populates="user")
