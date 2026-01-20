@@ -1,22 +1,32 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 from app.db.models.user import Users
 from app.schema.cart import CartOut
 from app.db.models.cart import Cart
 from app.db.models.products import Product
 
 def add_to_cart(db:Session, cart_item:CartOut):
-    product = db.get(Product, cart_item.product_id)
-    if not product or product.quantity<=cart_item.quantity:
-        return None
     user = db.get(Users, cart_item.user_id)
     if not user:
         return False
-    stmt = db.query(Cart).filter(Cart.user_id==cart_item.user_id, Cart.product_id==cart_item.product_id).first()
+    product = db.query(Product).filter(Product.id==cart_item.product_id).with_for_update().first()
+    if not product or product.quantity<cart_item.quantity:
+        return None
+    stmt = db.query(Cart).filter(Cart.user_id==cart_item.user_id, Cart.product_id==cart_item.product_id).with_for_update().first()
     if stmt:
         stmt.quantity+=cart_item.quantity
         stmt.total_price=product.price*stmt.quantity
-    cart = Cart(**cart_item.model_dump(), price=product.price, total_price=product.price*cart_item.quantity)
-    db.add(cart)
+    else:
+        stmt = Cart(**cart_item.model_dump(), price=product.price, total_price=product.price*cart_item.quantity)
+        db.add(stmt)
+        
     db.commit()
-    db.refresh(cart)
-    return cart
+    db.refresh(stmt)
+    return stmt
+
+def see_cart(db:Session, user_id:int):
+    items = db.query(Cart).filter(Cart.user_id==user_id).all()
+    if not items:
+        return None
+    total_price = db.query(func.sum(Cart.total_price)).filter(Cart.user_id==user_id).scalar()
+    return {"items" : items, "total_price" : total_price}
