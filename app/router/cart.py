@@ -2,7 +2,7 @@ from fastapi import HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
 from app.deps.db import get_db
 from app.schema.cart import CartOut
-from app.services.cart_service import add_to_cart
+from app.services.cart_service import add_to_cart, see_cart
 
 router = APIRouter(prefix="/Cart", tags=["Cart"])
 
@@ -12,5 +12,12 @@ async def add_in_cart(cart_item:CartOut, db:Session=Depends(get_db)):
     if cart is None:
         raise HTTPException(status_code=404, detail="Insufficient stock")
     if cart is False:
+        raise HTTPException(status_code=404, detail="user not found")
+    return cart
+
+@router.get("/see_cart")
+async def check_cart(user_id:int, db:Session=Depends(get_db)):
+    cart = see_cart(db, user_id)
+    if not cart:
         raise HTTPException(status_code=404, detail="user not found")
     return cart
