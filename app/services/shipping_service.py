@@ -16,3 +16,9 @@ def fetch_address(db:Session, user_id:int):
     if not address:
         return None
     return address
+
+def get_address_by_id(db:Session, address_id:int):
+    address = db.query(ShippingAddress).filter(ShippingAddress.id==address_id).first()
+    if not address:
+        return None
+    return address
