@@ -22,3 +22,18 @@ def get_address_by_id(db:Session, address_id:int):
     if not address:
         return None
     return address
+
+def update_address(db:Session, user_id:int, data:ShippingBase, address_id:int):
+    address = db.query(ShippingAddress).filter(ShippingAddress.id==address_id, user_id==user_id).first()
+    if not address:
+        return None
+    address.address_line1 = data.address_line1
+    address.address_line2 = data.address_line2
+    address.city = data.city
+    address.postal_code = data.postal_code
+    address.state = data.state
+    address.country = data.country
+    db.add(address)
+    db.commit()
+    db.refresh(address)
+    return address
