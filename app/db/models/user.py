@@ -26,3 +26,4 @@ class Users(Base):
     )
 
     cart = relationship("Cart", back_populates="user")
+    shipping = relationship("ShippingAddress", back_populates="user")
