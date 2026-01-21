@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from app.db.models.user import Users
-from app.schema.cart import CartOut, CartItem
+from app.schema.cart import CartItem
 from app.db.models.cart import Cart
 from app.db.models.products import Product
 
@@ -30,3 +30,11 @@ def see_cart(db:Session, user_id:int):
         return None
     total_price = db.query(func.sum(Cart.total_price)).filter(Cart.user_id==user_id).scalar()
     return {"items" : items, "total_price" : total_price}
+
+def remove_cart(db:Session, user_id:int, cart_id:int):
+    cart = db.query(Cart).filter(Cart.id==cart_id).first()
+    if not cart:
+        return None
+    db.delete(cart)
+    db.commit()
+    return True
