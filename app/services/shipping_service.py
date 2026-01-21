@@ -37,3 +37,11 @@ def update_address(db:Session, user_id:int, data:ShippingBase, address_id:int):
     db.commit()
     db.refresh(address)
     return address
+
+def delete_address(db:Session, user_id:int, address_id:int):
+    address = db.query(ShippingAddress).filter(ShippingAddress.id==address_id, user_id==user_id).first()
+    if not address:
+        return None
+    db.delete(address)
+    db.commit()
+    return True
