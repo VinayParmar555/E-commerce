@@ -30,7 +30,7 @@ async def get_user_address_byid(address_id:int, user:Users=Depends(get_current_u
         raise HTTPException(status_code=404, detail="address not found")
     return address
 
-@router.post("/update/{address_id}")
+@router.put("/update/{address_id}")
 async def update_existing_address(data:ShippingBase, address_id:int, user:Users=Depends(get_current_user), db:Session=Depends(get_db)):
     address = update_address(db, user.id, data, address_id)
     if not address:
