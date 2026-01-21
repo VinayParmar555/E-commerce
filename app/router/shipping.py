@@ -22,3 +22,10 @@ async def see_address(user:Users=Depends(get_current_user), db:Session=Depends(g
     if not address:
         raise HTTPException(status_code=404, detail="add address!")
     return address
+
+@router.get("/fetch_byid/{address_id}", response_model=ShippingAddress)
+async def get_user_address_byid(address_id:int, user:Users=Depends(get_current_user), db:Session=Depends(get_db)):
+    address = get_address_by_id(db, address_id)
+    if not address:
+        raise HTTPException(status_code=404, detail="address not found")
+    return address
