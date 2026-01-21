@@ -10,3 +10,9 @@ def create_shipping_address(db:Session, user_id:int, data:ShippingBase):
     db.commit()
     db.refresh(address)
     return address
+
+def fetch_address(db:Session, user_id:int):
+    address = db.query(ShippingAddress).filter(ShippingAddress.user_id==user_id).all()
+    if not address:
+        return None
+    return address
