@@ -36,3 +36,10 @@ async def update_existing_address(data:ShippingBase, address_id:int, user:Users=
     if not address:
         raise HTTPException(status_code=404, detail="address not found")
     return {"msg" : "Address updated succesfully"}
+
+@router.delete("/delete_address/{address_id}")
+async def delete_existing_address(address_id:int, user:Users=Depends(get_current_user), db:Session=Depends(get_db)):
+    address = delete_address(db, user.id, address_id)
+    if not address:
+        raise HTTPException(status_code=404, detail="address not found")
+    return {"msg" : "Address deleted succesfully!"}
