@@ -26,4 +26,6 @@ class Users(Base):
     )
 
     cart = relationship("Cart", back_populates="user")
-    shipping = relationship("ShippingAddress", back_populates="user")
+    shippingadd = relationship("ShippingAddress", back_populates="useradd")
+    user_order = relationship("Order", back_populates="user_item")
+    paymentuser = relationship("Payment", back_populates="user_payment")
