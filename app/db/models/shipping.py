@@ -1,5 +1,6 @@
 from app.db.base import Base
-from sqlalchemy import Column, Integer, String, ForeignKey
+from app.schema.shipping import ShippingStatus as SchemaStatus
+from sqlalchemy import Column, DateTime, Integer, String, ForeignKey, Enum, func
 from sqlalchemy.orm import relationship
 
 class ShippingAddress(Base):
@@ -15,4 +16,16 @@ class ShippingAddress(Base):
     state = Column(String, nullable=False)
     country = Column(String, nullable=False)
 
-    user = relationship("Users", back_populates="shipping")
+    useradd = relationship("Users", back_populates="shippingadd")
+    orders = relationship("Order", back_populates="shippingaddress")
+
+class ShippingStatus(Base):
+     
+    __tablename__ = "shipping_status"
+
+    id = Column(Integer, primary_key=True, index=True)
+    order_id = Column(Integer, ForeignKey("orders.id", ondelete="CASCADE"), nullable=False)
+    status =  Column(Enum(SchemaStatus, name="shipping_status_enum"), default=SchemaStatus.pending)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), server_onupdate=func.now(), nullable=False)
+
+    orderid = relationship("Order", back_populates="shippingstatus")
