@@ -14,13 +14,13 @@ class Order(Base):
     status = Column(Enum(OrderStatus, name="order_status_enum"), default=OrderStatus.pending)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
-    items = relationship("OrderItems", back_populates="order")
+    items = relationship("OrderItem", back_populates="order")
     user_item = relationship("Users", back_populates="user_order")
     shippingaddress = relationship("ShippingAddress", back_populates="orders")
     shippingstatus = relationship("ShippingStatus", back_populates="orderid")
     payment = relationship("Payment", back_populates="order_payment")
 
-class OrderItems(Base):
+class OrderItem(Base):
 
     __tablename__ = "orders_items"
 
