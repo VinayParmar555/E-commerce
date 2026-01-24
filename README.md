@@ -25,7 +25,7 @@ You can run this project in two ways:
 ### 1. Clone the Repository
 ```bash
 git clone <your-repo-url>
-cd e-commerce-backend
+cd E-commerce_backup
 ```
 
 ### 2. Create environment variables
@@ -65,9 +65,9 @@ docker logs -f e-commerce_app
 ```
 ### 6. Stop the application
 ```bash
-docker compose down
+docker compose stop
 ```
-This drops containers but keeps database data intact.
+This stops containers but keeps database data intact.
 
 ### 7. Production Deployment (Render)
 The application is deployed on Render using a Docker image pushed to Docker Hub.
