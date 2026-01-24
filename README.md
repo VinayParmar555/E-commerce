@@ -1,6 +1,6 @@
 # E-Commerce Backend
 
-A production-ready **FastAPI backend** built with **PostgreSQL**, **Redis**, and **Docker**.  
+A production-ready **FastAPI backend** built with **PostgreSQL**, **Alembic migrations**, **Redis**, and **Docker**.  
 The application is fully containerized and deployed on **Render**.
 
 ---
