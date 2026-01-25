@@ -1,6 +1,5 @@
 from sqlalchemy.orm import Session
 from app.schema.payment import PaymentCreate, PaymentGateway, PaymentStatus
-from app.schema.shipping import ShippingAddress
 from app.db.models.payment import Payment
 from app.utils.mock_id import generate_mock_id
 
