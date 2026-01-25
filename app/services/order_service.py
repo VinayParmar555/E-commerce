@@ -78,3 +78,14 @@ def fetch_placed_order(db:Session, user_id:int):
         .all()
     )
     return order
+
+def fetch_single_placed_order(db:Session, user_id:int, order_id:int):
+    order = (
+        db.query(Order)
+        .filter(Order.id==order_id, Order.user_id==user_id)
+        .options(selectinload(Order.items))
+        .first()
+    )
+    if not order:
+        return False
+    return order
