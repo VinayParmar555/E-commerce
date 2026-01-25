@@ -8,6 +8,12 @@ from app.router.shipping import router as shipping_router
 from app.router.order import router as order_router
 
 app = FastAPI(title="E-commerce Website")
+@app.get("/")
+def root():
+    return {
+        "message" : "E-commerce Backend is live",
+        "docs" : "/docs"
+    }
 app.include_router(product_router)
 app.include_router(auth_router)
 app.include_router(user_router)
