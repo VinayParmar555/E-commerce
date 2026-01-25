@@ -6,7 +6,7 @@ from app.deps.db import get_db
 from app.deps.auth import get_current_user
 from app.schema.order import Order
 from app.schema.payment import PaymentCreate
-from app.services.order_service import checkout, fetch_placed_order
+from app.services.order_service import checkout, fetch_placed_order, fetch_single_placed_order
 from app.exception.checkout import (
     CartItemError, 
     PaymentFailedError, 
@@ -36,6 +36,13 @@ async def checkout_order(data:PaymentCreate, user:Users=Depends(get_current_user
 @router.get("/fetch_placed_order", response_model=List[Order])
 async def fetch_placed_order_for_user(user:Users=Depends(get_current_user), db:Session=Depends(get_db)):
     order = fetch_placed_order(db, user.id)
+    if not order:
+        raise HTTPException(status_code=404, detail="Place order!")
+    return order
+
+@router.get("/single_placed_order/{order_id}", response_model=Order)
+async def single_placed_order(order_id:int, user:Users=Depends(get_current_user), db:Session=Depends(get_db)):
+    order = fetch_single_placed_order(db, user.id, order_id)
     if not order:
         raise HTTPException(status_code=404, detail="Place order!")
     return order
