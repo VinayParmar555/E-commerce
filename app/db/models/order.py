@@ -17,7 +17,7 @@ class Order(Base):
     items = relationship("OrderItem", back_populates="order")
     user_item = relationship("Users", back_populates="user_order")
     shippingaddress = relationship("ShippingAddress", back_populates="orders")
-    shippingstatus = relationship("ShippingStatus", back_populates="orderid")
+    shippingstatus = relationship("ShippingStatus", back_populates="orderid", uselist=False)
     payment = relationship("Payment", back_populates="order_payment")
 
 class OrderItem(Base):
