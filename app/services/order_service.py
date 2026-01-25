@@ -1,5 +1,4 @@
-from sqlalchemy import func
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session, selectinload
 from app.db.models.cart import Cart
 from app.db.models.order import Order, OrderItem
 from app.db.models.products import Product
@@ -11,7 +10,7 @@ from app.services.payment_service import create_payment
 from app.exception.checkout import AddressIdError, CartItemError, PaymentFailedError, InsufficientStockError, PaymentAmountMismatch
 
 def checkout(db:Session, user_id:int, payment_data:PaymentCreate):
-    cart_items = db.query(Cart).filter(Cart.user_id==user_id).options(joinedload(Cart.product)).all()
+    cart_items = db.query(Cart).filter(Cart.user_id==user_id).options(selectinload(Cart.product)).all()
     if not cart_items:
         raise CartItemError("No item in cart")
     for items in cart_items:
@@ -64,9 +63,18 @@ def checkout(db:Session, user_id:int, payment_data:PaymentCreate):
         db.query(Order)
         .filter(Order.user_id==user_id)
         .options(
-            joinedload(Order.items), 
-            joinedload(Order.shippingaddress), 
-            joinedload(Order.shippingstatus))
+            selectinload(Order.items), 
+            selectinload(Order.shippingaddress), 
+            selectinload(Order.shippingstatus))
         .all()
     )
     return stmt
+
+def fetch_placed_order(db:Session, user_id:int):
+    order = (
+        db.query(Order)
+        .filter(Order.user_id==user_id)
+        .options(selectinload(Order.items), selectinload(Order.items).selectinload(OrderItem.order_product))
+        .all()
+    )
+    return order
