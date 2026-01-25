@@ -89,3 +89,15 @@ def fetch_single_placed_order(db:Session, user_id:int, order_id:int):
     if not order:
         return False
     return order
+
+def cancel_placed_order(db:Session, user_id:int, order_id:int):
+    order = fetch_single_placed_order(db, user_id, order_id)
+    if not order:
+        return None
+    if not order.shippingstatus or order.shippingstatus.status not in (SchemaShippingStatus.pending, SchemaShippingStatus.processing):
+        return False
+    order.status = OrderStatus.cancelled
+    order.shippingstatus.status = SchemaShippingStatus.cancelled
+    db.commit()
+    db.refresh(order)
+    return order
