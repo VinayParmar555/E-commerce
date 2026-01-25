@@ -11,7 +11,7 @@ from app.services.product_service import (
 from app.cache.cache_service import get_cached_products, delete_cached_product
 from app.cache.redis_client import redis_client
 
-router = APIRouter(prefix="/products", tags=["Operations"])
+router = APIRouter(prefix="/products", tags=["Products"])
 
 @router.get("/all", response_model=List[ProductRead])
 async def List_of_existing_products(db:Session = Depends(get_db)):
