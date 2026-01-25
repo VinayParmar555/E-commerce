@@ -24,7 +24,7 @@ class Order(BaseModel):
     status : OrderStatus
     created_at : datetime
     items : list[OrderItem]
-    shippingstatus : list[ShippingStatusResponse]
+    shippingstatus : ShippingStatusResponse
     shippingaddress : ShippingAddress
 
     model_config = {"from_attributes" : True}
