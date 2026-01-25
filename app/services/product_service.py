@@ -1,17 +1,17 @@
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session, selectinload
 from app.db.models.products import Product
 from app.db.models.category import Category
 from app.schema.products import ProductRead, ProductCreate
 from typing import List
 
 def List_of_products(db:Session):
-    db_products = db.query(Product).options(joinedload(Product.category)).all()
+    db_products = db.query(Product).options(selectinload(Product.category)).all()
     if not db_products:
         return False
     return db_products
 
 def search_product(db:Session, id:int):
-    db_product = db.query(Product).options(joinedload(Product.category)).filter(Product.id==id).first()
+    db_product = db.query(Product).options(selectinload(Product.category)).filter(Product.id==id).first()
     if not db_product:
         return False
     return {
@@ -71,7 +71,7 @@ def filter_products(
         max_price:int | None = None, 
         limit:int=5, page:int=1
     ):
-    stmt = db.query(Product).options(joinedload(Product.category))
+    stmt = db.query(Product).options(selectinload(Product.category))
     filters=[]
     if category:
         stmt = stmt.join(Product.category)
