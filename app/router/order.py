@@ -4,9 +4,16 @@ from sqlalchemy.orm import Session
 from app.db.models.user import Users
 from app.deps.db import get_db
 from app.deps.auth import get_current_user
+from app.schema.shipping import ShippingStatus as SchemaShippingStatus
 from app.schema.order import Order
 from app.schema.payment import PaymentCreate
-from app.services.order_service import cancel_placed_order, checkout, fetch_placed_order, fetch_single_placed_order, get_user_shipping_status
+from app.services.order_service import (
+    cancel_placed_order, checkout, 
+    fetch_placed_order, 
+    fetch_single_placed_order, 
+    get_user_shipping_status, 
+    update_shipping_status
+)
 from app.exception.checkout import (
     CartItemError, 
     PaymentFailedError, 
@@ -62,3 +69,12 @@ async def shipping_status(order_id:int,user:Users=Depends(get_current_user), db:
     if shipstat is None:
         raise HTTPException(status_code=404, detail="Order not found or not authorized")
     return shipstat
+
+@router.patch("/update_shipping_status/{order_id}")
+async def update_status(new_status:SchemaShippingStatus, order_id:int, user:Users=Depends(get_current_user), db:Session=Depends(get_db)):
+    if not user.is_admin:
+        raise HTTPException(status_code=403, detail="Admins Only!")                           
+    order = update_shipping_status(db, new_status, order_id)
+    if order is None:
+        raise HTTPException(status_code=404, detail="Order not found/is cancelled")
+    return order
