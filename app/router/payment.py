@@ -15,7 +15,7 @@ async def check_payment_status(order_id:int, user:Users=Depends(get_current_user
         raise HTTPException(status_code=404, detail="Payment not found!")
     return payment
 
-@router.patch("/payment_status_all/{order_id}")
+@router.patch("/payment_status_all", response_model=list[PaymentResponse])
 async def check_payment_status_all(user:Users=Depends(get_current_user), db:Session=Depends(get_db)):
     payment = fetch_all_payments(db, user.id)
     if payment is None:
