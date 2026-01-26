@@ -26,9 +26,9 @@ class PaymentResponse(BaseModel):
     status : PaymentStatus
     payment_gateway : PaymentGateway
     is_paid : bool
-    pg_order_id : str
-    pg_payment_id : str
-    pg_signature : str
+    pg_order_id : str | None
+    pg_payment_id : str | None
+    pg_signature : str | None
     created_at : datetime
     updated_at : datetime
 
