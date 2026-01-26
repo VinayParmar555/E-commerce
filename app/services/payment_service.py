@@ -43,3 +43,9 @@ def fetch_payment_status(db:Session, user_id:int, order_id:int):
     if not payment:
         return None
     return payment
+
+def fetch_all_payments(db:Session, user_id:int):
+    payment = db.query(Payment).filter(Payment.user_id==user_id).all()
+    if not payment:
+        return None
+    return payment
