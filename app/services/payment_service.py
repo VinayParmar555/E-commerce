@@ -37,3 +37,9 @@ def create_payment(db:Session, user_id:int, order_id:int, data:PaymentCreate):
     db.commit()
     db.refresh(payment)
     return payment
+
+def fetch_payment_status(db:Session, user_id:int, order_id:int):
+    payment = db.query(Payment).filter(Payment.user_id==user_id, Payment.order_id==order_id).first()
+    if not payment:
+        return None
+    return payment
