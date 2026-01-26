@@ -101,3 +101,9 @@ def cancel_placed_order(db:Session, user_id:int, order_id:int):
     db.commit()
     db.refresh(order)
     return order
+
+def get_user_shipping_status(db:Session, user_id:int, order_id:int):
+    ship_status = db.query(Order).filter(Order.user_id==user_id, Order.id==order_id).options(selectinload(Order.shippingstatus)).first()
+    if not ship_status:
+        return None
+    return ship_status.shippingstatus
