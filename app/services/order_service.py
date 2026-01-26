@@ -107,3 +107,12 @@ def get_user_shipping_status(db:Session, user_id:int, order_id:int):
     if not ship_status:
         return None
     return ship_status.shippingstatus
+
+def update_shipping_status(db:Session, new_status:SchemaShippingStatus, order_id:int):
+    order_shippingstatus = db.query(ShippingStatus).filter(ShippingStatus.order_id==order_id).first()
+    if not order_shippingstatus or order_shippingstatus.status == SchemaShippingStatus.cancelled:
+        return None
+    order_shippingstatus.status = new_status
+    db.commit()
+    db.refresh(order_shippingstatus)
+    return order_shippingstatus
