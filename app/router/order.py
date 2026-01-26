@@ -6,7 +6,7 @@ from app.deps.db import get_db
 from app.deps.auth import get_current_user
 from app.schema.order import Order
 from app.schema.payment import PaymentCreate
-from app.services.order_service import cancel_placed_order, checkout, fetch_placed_order, fetch_single_placed_order
+from app.services.order_service import cancel_placed_order, checkout, fetch_placed_order, fetch_single_placed_order, get_user_shipping_status
 from app.exception.checkout import (
     CartItemError, 
     PaymentFailedError, 
@@ -55,3 +55,10 @@ async def cancel_order(order_id:int,user:Users=Depends(get_current_user), db:Ses
     if order is False:
         raise HTTPException(status_code=400, detail="Order is already shipped")
     return order
+
+@router.get("/shipping_status/{order_id}")
+async def shipping_status(order_id:int,user:Users=Depends(get_current_user), db:Session=Depends(get_db)):
+    shipstat = get_user_shipping_status(db, user.id, order_id)
+    if shipstat is None:
+        raise HTTPException(status_code=404, detail="Order not found or not authorized")
+    return shipstat
