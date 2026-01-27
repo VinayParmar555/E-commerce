@@ -12,3 +12,6 @@ class PaymentAmountMismatch(CartItemError):
 
 class AddressIdError(CartItemError):
     pass
+
+class RazorpayPaymentFailed(CartItemError):
+    pass
