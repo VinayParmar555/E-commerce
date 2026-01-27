@@ -1,21 +1,25 @@
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    DATABASE_URL: str
-    JWT_SECRET_KEY: str
-    JWT_REFRESH_SECRET_KEY: str
-    JWT_EMAIL_SECRET_KEY: str
+    DATABASE_URL : str
+    JWT_SECRET_KEY : str
+    JWT_REFRESH_SECRET_KEY : str
+    JWT_EMAIL_SECRET_KEY : str
     JWT_ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int
-    REFRESH_TOKEN_EXPIRE_DAYS: int
-    EMAIL_TOKEN_EXPIRE_MINUTES: int
-    REDIS_HOST: str
-    REDIS_PORT: int
-    REDIS_DB: int
-    DATABASE_NAME: str
-    DATABASE_USER: str
-    DATABASE_PWD: str
-    
+    ACCESS_TOKEN_EXPIRE_MINUTES : int
+    REFRESH_TOKEN_EXPIRE_DAYS : int
+    EMAIL_TOKEN_EXPIRE_MINUTES : int
+    REDIS_HOST : str
+    REDIS_PORT : int
+    REDIS_DB : int
+    DATABASE_NAME : str
+    DATABASE_USER : str
+    DATABASE_PWD : str
+    RAZORPAY_KEY_ID :str
+    RAZORPAY_KEY_SECRET : str
+    RAZORPAY_WEBHOOK_SECRET : str
+    RAZORPAY_CALLBACK_URL : str
+
     class Config:
         env_file = ".env"
 
