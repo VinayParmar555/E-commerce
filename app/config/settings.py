@@ -18,7 +18,6 @@ class Settings(BaseSettings):
     RAZORPAY_KEY_ID :str
     RAZORPAY_KEY_SECRET : str
     RAZORPAY_WEBHOOK_SECRET : str
-    RAZORPAY_CALLBACK_URL : str
 
     class Config:
         env_file = ".env"
