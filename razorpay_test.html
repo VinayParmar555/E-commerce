@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Razorpay Test</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  </head>
+  <body>
+    <h2>Razorpay Test Payment</h2>
+    <button id="pay">Pay Now</button>
+
+    <script>
+      document.getElementById("pay").onclick = function () {
+        var options = {
+          key: "rzp_test_S8WpfaGHt6KZ39",
+          amount: "49000",
+          currency: "INR",
+          order_id: "order_S90qidBOpg5172",
+          name: "Test Payment",
+        };
+
+        var rzp = new Razorpay(options);
+        rzp.open();
+      };
+    </script>
+  </body>
+</html>
