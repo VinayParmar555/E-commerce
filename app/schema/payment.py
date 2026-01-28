@@ -33,3 +33,9 @@ class PaymentResponse(BaseModel):
     updated_at : datetime
 
     model_config = {"from_attributes" : True}
+
+class PaymentResponseRazorpay(BaseModel):
+    payment : PaymentResponse
+    rz_data : dict | None = None
+
+    model_config = {"from_attributes" : True}
