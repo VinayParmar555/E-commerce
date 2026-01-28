@@ -4,6 +4,12 @@ class CartItemError(Exception):
 class PaymentFailedError(CartItemError):
     pass
 
+class PaymentError(CartItemError):
+    pass
+
+class OrderError(CartItemError):
+    pass
+
 class InsufficientStockError(CartItemError):
     pass
 
