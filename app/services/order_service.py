@@ -7,7 +7,7 @@ from app.schema.order import OrderStatus
 from app.schema.shipping import ShippingStatus as SchemaShippingStatus
 from app.schema.payment import PaymentCreate
 from app.services.payment_service import create_payment
-from app.exception.checkout import AddressIdError, CartItemError, PaymentFailedError, InsufficientStockError, PaymentAmountMismatch
+from app.exception.checkout import AddressIdError, CartItemError, InsufficientStockError, PaymentAmountMismatch, RazorpayPaymentFailed
 
 def checkout(db:Session, user_id:int, payment_data:PaymentCreate):
     cart_items = db.query(Cart).filter(Cart.user_id==user_id).options(selectinload(Cart.product)).all()
@@ -36,15 +36,13 @@ def checkout(db:Session, user_id:int, payment_data:PaymentCreate):
     if payment_data.amount!=total_amount:
         raise PaymentAmountMismatch("Payment amount does not match cart total!")
     
-    payment = create_payment(db, user_id, order.id, payment_data)
-    if not payment or not payment.is_paid:
-        db.rollback()
-        raise PaymentFailedError("Payment failed/Invalid payment type")
-    
+    payment_res = create_payment(db, user_id, order, payment_data)
+    if not payment_res:
+        raise RazorpayPaymentFailed("Unsupported payment gateway!")
+
     for its in cart_items:
         product = db.query(Product).filter(Product.id==its.product_id).with_for_update().first()
         product.quantity-=its.quantity
-    order.status = OrderStatus.confirmed
     
     for item in cart_items:
         order_item = OrderItem(
@@ -56,9 +54,6 @@ def checkout(db:Session, user_id:int, payment_data:PaymentCreate):
         db.add(order_item)
 
     db.query(Cart).filter(Cart.user_id==user_id).delete()
-
-    shipping_status = ShippingStatus(order_id=order.id, status=SchemaShippingStatus.processing)
-    db.add(shipping_status)
     stmt = (
         db.query(Order)
         .filter(Order.user_id==user_id)
@@ -68,7 +63,10 @@ def checkout(db:Session, user_id:int, payment_data:PaymentCreate):
             selectinload(Order.shippingstatus))
         .all()
     )
-    return stmt
+    return {
+        "payment" : payment_res.payment,
+        "rz_data" : payment_res.rz_data
+    }
 
 def fetch_placed_order(db:Session, user_id:int):
     order = (
