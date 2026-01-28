@@ -19,12 +19,13 @@ from app.exception.checkout import (
     PaymentFailedError, 
     InsufficientStockError, 
     AddressIdError, 
-    PaymentAmountMismatch
+    PaymentAmountMismatch,
+    RazorpayPaymentFailed
 )
 
 router = APIRouter(prefix="/order", tags=["Order"])
 
-@router.post("/checkout", response_model=List[Order])
+@router.post("/checkout")
 async def checkout_order(data:PaymentCreate, user:Users=Depends(get_current_user), db:Session=Depends(get_db)):
     try:
         order = checkout(db, user.id, data)
@@ -36,7 +37,7 @@ async def checkout_order(data:PaymentCreate, user:Users=Depends(get_current_user
     except PaymentFailedError as e:
         db.rollback()
         raise HTTPException(status_code=402, detail=str(e))
-    except (InsufficientStockError, PaymentAmountMismatch) as e:
+    except (InsufficientStockError, PaymentAmountMismatch, RazorpayPaymentFailed) as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
     
