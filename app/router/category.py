@@ -1,4 +1,5 @@
 from fastapi import HTTPException, Depends, APIRouter
+from app.cache.rate_limit import ip_key, rate_limit
 from app.services.category_service import add_categories
 from app.schema.category import CategoryBase
 from sqlalchemy.orm import Session
@@ -9,7 +10,7 @@ from app.services.category_service import add_categories, get_categories, update
 
 router = APIRouter(prefix="/Categories", tags=["Category"])
 
-@router.post("/add_category")
+@router.post("/add")
 async def add_new_category(category:CategoryBase, db:Session=Depends(get_db), current_user:Users = Depends(get_current_user)):
     if not current_user.is_admin:
         raise HTTPException(status_code=401, detail="Admins only")
@@ -18,14 +19,14 @@ async def add_new_category(category:CategoryBase, db:Session=Depends(get_db), cu
         raise HTTPException(status_code=400, detail="Invalid input")
     return {"msg" : "Category added successfully"}
 
-@router.get("/see_all_categories")
-async def see_categories(db:Session=Depends(get_db)):
+@router.get("/all")
+async def see_categories(_:None=Depends(rate_limit(10,60,ip_key)), db:Session=Depends(get_db)):
     result = get_categories(db)
     if not result:
         raise HTTPException(status_code=404, detail="Category not found")
     return result
 
-@router.put("/update_category")
+@router.put("/update")
 async def update_existing_category(new_category:CategoryBase, id:int, db:Session=Depends(get_db), current_user:Users=Depends(get_current_user)):
     if not current_user.is_active:
         raise HTTPException(status_code=401, detail="Admins only!")
@@ -34,7 +35,7 @@ async def update_existing_category(new_category:CategoryBase, id:int, db:Session
         raise HTTPException(status_code=404, detail="category not found")
     return {"msg" : "category updated successfully"}
 
-@router.delete("/delete_category/{id}")
+@router.delete("/delete/{id}")
 async def delete_existing_category(id:int, db:Session=Depends(get_db), current_user:Users=Depends(get_current_user)):
     if not current_user.is_admin:
         raise HTTPException(status_code=401, detail="Admins only!")

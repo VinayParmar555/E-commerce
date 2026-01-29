@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import List
 from sqlalchemy.orm import Session
+from app.cache.rate_limit import ip_key, rate_limit, user_key
 from app.deps.db import get_db
 from app.deps.auth import get_current_user
 from app.schema.products import ProductRead, ProductCreate
@@ -14,21 +15,21 @@ from app.cache.redis_client import redis_client
 router = APIRouter(prefix="/products", tags=["Products"])
 
 @router.get("/all", response_model=List[ProductRead])
-async def List_of_existing_products(db:Session = Depends(get_db)):
+async def List_of_existing_products(_:None=Depends(rate_limit(5,60,ip_key)), db:Session=Depends(get_db)):
     db_products = get_cached_products(db)
     if not db_products:
         raise HTTPException(status_code=404, detail="Products not found")
     return db_products
 
-@router.get("/{id:int}")
-async def search_existing_product(id:int, db:Session=Depends(get_db)):
+@router.get("/search/{id:int}")
+async def search_existing_product(id:int, _:None=Depends(rate_limit(10,60,ip_key)), db:Session=Depends(get_db)):
     db_product = search_product(db, id)
     if not db_product:
         raise HTTPException(status_code=404, detail="Product not found")
     return db_product
 
 @router.post("/add_product")
-async def add_new_product(product:ProductCreate, db:Session = Depends(get_db), current_user:Users = Depends(get_current_user)):
+async def add_new_product(product:ProductCreate, current_user:Users=Depends(get_current_user), db:Session=Depends(get_db)):
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admins Only")
     db_product = add_product(db, product)
@@ -38,7 +39,7 @@ async def add_new_product(product:ProductCreate, db:Session = Depends(get_db), c
     return {"msg" : "Product added successfully"}
 
 @router.put("/update/{id}")
-async def update_existing_product(id:int, product:ProductCreate, db:Session=Depends(get_db), current_user:Users=Depends(get_current_user)):
+async def update_existing_product(id:int, product:ProductCreate, current_user:Users=Depends(get_current_user), db:Session=Depends(get_db)):
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admins Only")
     db_product = update_product(db, id, product)
@@ -48,7 +49,7 @@ async def update_existing_product(id:int, product:ProductCreate, db:Session=Depe
     return {"msg" : "Product Updated successfully"}
 
 @router.delete("/delete/{id}")        
-async def delete_existing_product(id: int, db:Session = Depends(get_db), current_user:Users = Depends(get_current_user)):
+async def delete_existing_product(id:int, current_user:Users=Depends(get_current_user), db:Session=Depends(get_db)):
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admins Only")                           
     db_product = delete_product(db, id)
@@ -58,7 +59,7 @@ async def delete_existing_product(id: int, db:Session = Depends(get_db), current
     return {"detail" : "Product Deleted successfully"}
 
 @router.post("/bulk_products")
-async def add_new_bulk_products(product:List[ProductCreate], db:Session=Depends(get_db), current_user:Users = Depends(get_current_user)):
+async def add_new_bulk_products(product:List[ProductCreate], current_user:Users=Depends(get_current_user), db:Session=Depends(get_db)):
     if not current_user.is_admin:
         raise HTTPException(status_code=403, detail="Admins Only")                           
     db_product = add_bulk_products(db, product)
