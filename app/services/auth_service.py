@@ -76,4 +76,4 @@ def verify_email_token(db: Session, token: str):
     db_user.is_verified = True
     db.commit()
     db.refresh(db_user)
-    return {"msg" : "Email verified successfully"}
+    return True
