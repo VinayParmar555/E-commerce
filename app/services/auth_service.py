@@ -62,7 +62,7 @@ def verify_refresh_token(db: Session, token: str):
 
 def email_verification_process(user: Users):
     token = create_email_verification_token(user.id)
-    link = f"http://localhost:8000/app/verify?token={token}"
+    link = f"http://e-commerce-ytgi.onrender.com/app/verify-request?token={token}"
     print (f"Verify your email: {link}")
     return {"msg" : "email verification link sent"}
 

@@ -18,7 +18,7 @@ def reset_password_process(db: Session, email: str):
     if not user:
         return None
     token = create_password_reset_token(user.id)
-    link = f"http://localhost:8000/app/reset-password?token={token}"
+    link = f"http://e-commerce-ytgi.onrender.com/app/forgot-password?token={token}"
     print(link)
     return True
 
