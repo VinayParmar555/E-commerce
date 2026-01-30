@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 from app.cache.rate_limit import ip_key, rate_limit, user_key
 from app.deps.db import get_db
@@ -48,11 +48,11 @@ async def refresh(request:Request, _:None=Depends(rate_limit(10,60,ip_key)), db:
     return response
 
 @router.post("/verify-request")
-async def send_verification_link(user=Depends(get_current_user), _:None=Depends(rate_limit(5,60,user_key))):
-    return email_verification_process(user)
+async def send_verification_link(background_tasks:BackgroundTasks, user=Depends(get_current_user), _:None=Depends(rate_limit(5,60,user_key))):
+    return email_verification_process(background_tasks, user)
 
 @router.get("/verify")
-async def verify_email(token:str, user=Depends(get_current_user), _:None=Depends(rate_limit(5,60,user_key)), db:Session=Depends(get_db)):
+async def verify_email(token:str, _:None=Depends(rate_limit(5,60,ip_key)), db:Session=Depends(get_db)):
     result = verify_email_token(db, token)
     if result is None:
         raise HTTPException(status_code=400, detail="Invalid or expired token")

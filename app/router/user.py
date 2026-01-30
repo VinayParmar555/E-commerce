@@ -1,4 +1,4 @@
-from fastapi import APIRouter,HTTPException, Depends, Request
+from fastapi import APIRouter,HTTPException, Depends, Request, BackgroundTasks
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from app.cache.rate_limit import ip_key, rate_limit, user_key
@@ -28,8 +28,8 @@ async def change_password(old_password:str, new_password:str, user:Users=Depends
     return {"msg" : "Password changed succesfully"}
 
 @router.post("/forgot-password")
-async def forgot_password(email:str, _:None=Depends(rate_limit(3,60,ip_key)), db:Session=Depends(get_db)):
-    result = reset_password_process(db, email)
+async def forgot_password(email:str, background_tasks:BackgroundTasks, _:None=Depends(rate_limit(3,60,ip_key)), db:Session=Depends(get_db)):
+    result = reset_password_process(db, email, background_tasks)
     if not result:
         raise HTTPException(status_code=400, detail="Email not registered")
     return {"msg" : "reset link sent successfully"}
