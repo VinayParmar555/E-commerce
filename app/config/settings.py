@@ -18,6 +18,10 @@ class Settings(BaseSettings):
     RAZORPAY_KEY_ID :str
     RAZORPAY_KEY_SECRET : str
     RAZORPAY_WEBHOOK_SECRET : str
+    SMTP_EMAIL : str
+    SMTP_PASSWORD : str
+    SMTP_SERVER : str
+    SMTP_PORT : int
 
     class Config:
         env_file = ".env"
