@@ -1,6 +1,8 @@
+from fastapi import BackgroundTasks
 from sqlalchemy.orm import Session
 from app.db.models.user import Users
 from app.db.models.refresh_token import RefreshToken
+from app.utils.email_sender import send_email
 from app.utils.hashing import hash_password, verify_password
 from app.utils.jwt_manager import create_password_reset_token, verify_rtoken_and_get_user_id
 
@@ -13,13 +15,21 @@ def change_password_process(db: Session, user:Users, old_password: str, new_pass
     db.refresh(user)
     return True
 
-def reset_password_process(db: Session, email: str):
+def reset_password_process(db: Session, email: str, background_tasks:BackgroundTasks):
     user = db.query(Users).filter(Users.email == email).first()
     if not user:
         return None
     token = create_password_reset_token(user.id)
-    link = f"http://e-commerce-ytgi.onrender.com/app/forgot-password?token={token}"
-    print(link)
+    email_body = f"""
+        Hi {user.email}, 
+        Your password reset token is:
+
+        {token}
+
+        this token is valid for only 15minutes.
+
+    """
+    background_tasks.add_task(send_email, user.email, "Verify your email", email_body)
     return True
 
 def verify_rtoken(db: Session, token: str, new_password: str):

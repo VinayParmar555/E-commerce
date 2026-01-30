@@ -1,8 +1,10 @@
 from sqlalchemy.orm import Session
+from fastapi import BackgroundTasks
 from app.schema.user import UserCreate
 from app.db.models.user import Users
 from app.db.models.refresh_token import RefreshToken
 from app.utils.hashing import hash_password, verify_password
+from app.utils.email_sender import send_email
 from app.utils.jwt_manager import (
     create_access_token, 
     verify_token_and_get_user_id, 
@@ -60,10 +62,18 @@ def verify_refresh_token(db: Session, token: str):
             return db_user
     return None
 
-def email_verification_process(user: Users):
+def email_verification_process(background_tasks:BackgroundTasks, user: Users):
     token = create_email_verification_token(user.id)
-    link = f"http://e-commerce-ytgi.onrender.com/app/verify-request?token={token}"
-    print (f"Verify your email: {link}")
+    link = f"http://e-commerce-ytgi.onrender.com/account/verify?token={token}"
+    email_body = f"""
+        Hi {user.email}, 
+        Please verify your email by clicking the link below:
+
+        {link}
+
+        If you didn't request this, ignore this email.
+    """
+    background_tasks.add_task(send_email, user.email, "Verify your email", email_body)
     return {"msg" : "email verification link sent"}
 
 def verify_email_token(db: Session, token: str):
