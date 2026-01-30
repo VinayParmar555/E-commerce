@@ -29,7 +29,7 @@ def reset_password_process(db: Session, email: str, background_tasks:BackgroundT
         this token is valid for only 15minutes.
 
     """
-    background_tasks.add_task(send_email, user.email, "Verify your email", email_body)
+    background_tasks.add_task(send_email, user.email, "Reset password", email_body)
     return True
 
 def verify_rtoken(db: Session, token: str, new_password: str):
