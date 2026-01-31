@@ -54,15 +54,7 @@ def checkout(db:Session, user_id:int, payment_data:PaymentCreate):
         db.add(order_item)
 
     db.query(Cart).filter(Cart.user_id==user_id).delete()
-    stmt = (
-        db.query(Order)
-        .filter(Order.user_id==user_id)
-        .options(
-            selectinload(Order.items), 
-            selectinload(Order.shippingaddress), 
-            selectinload(Order.shippingstatus))
-        .all()
-    )
+
     return {
         "payment" : payment_res.payment,
         "rz_data" : payment_res.rz_data
