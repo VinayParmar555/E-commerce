@@ -22,7 +22,7 @@ def get_cached_products(db:Session):
         }
         for p in products
     ]
-    redis_client.setex(cache_key, 60 * 5, msgpack.packb(cached))
+    redis_client.setex(cache_key, 60 * 5, msgpack.packb(result))
     return result
 
 def delete_cached_product(product_id:int):
