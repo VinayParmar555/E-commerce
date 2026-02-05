@@ -1,13 +1,13 @@
 from sqlalchemy.orm import Session
 from app.cache.redis_client import redis_client
 from app.services.product_service import List_of_products
-import json
+import msgpack
 
 def get_cached_products(db:Session):
     cache_key = "products:list"
     cached = redis_client.get(cache_key)
     if cached:
-        return json.loads(cached)
+        return msgpack.unpackb(cached, raw=False)
     products = List_of_products(db)
 
     result = [
@@ -22,7 +22,7 @@ def get_cached_products(db:Session):
         }
         for p in products
     ]
-    redis_client.set(cache_key, json.dumps(result), ex=60 * 5)
+    redis_client.setex(cache_key, 60 * 5, msgpack.packb(cached))
     return result
 
 def delete_cached_product(product_id:int):
