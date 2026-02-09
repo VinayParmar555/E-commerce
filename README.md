@@ -70,7 +70,11 @@ docker compose stop
 This stops containers but keeps database data intact.
 
 ### 7. Production Deployment (Render)
-The application is deployed on Render using a Docker image pushed to Docker Hub.
+The application is deployed on Render directly from github repository.
+- Source: GitHub repository  
+- Build & Deploy: Managed by Render  
+- Auto-deploy enabled on every push to `main` branch 
+
 ```bash
 https://e-commerce-ytgi.onrender.com/docs
 ```
