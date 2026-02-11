@@ -12,7 +12,8 @@ if hostaddr:
 
 engine = create_engine(
     settings.DATABASE_URL,
-    connect_args=connect_args
+    connect_args=connect_args,
+    pool_pre_ping=True
 )
 
 session = sessionmaker(autocommit = False, autoflush=False, bind=engine)
