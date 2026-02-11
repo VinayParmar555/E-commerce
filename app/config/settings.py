@@ -2,7 +2,6 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     DATABASE_URL : str
-    DATABASE_HOSTADDR : str | None = None
     JWT_SECRET_KEY : str
     JWT_REFRESH_SECRET_KEY : str
     JWT_EMAIL_SECRET_KEY : str
