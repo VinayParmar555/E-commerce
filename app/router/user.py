@@ -10,7 +10,8 @@ from app.services.user_service import (
     reset_password_process, 
     verify_rtoken, 
     promote_admin, 
-    revoke_token
+    revoke_token,
+    delete_user
 )
 from app.db.models.user import Users
 
@@ -65,3 +66,10 @@ async def logout(request:Request, db:Session=Depends(get_db)):
     response = JSONResponse(content={"detail" : "Logged out successfully"})
     response.delete_cookie("refresh_token")
     return response
+
+@router.delete("/delete")
+async def delete_existing_user(current_user:Users=Depends(get_current_user), db:Session=Depends(get_db)):
+    result = delete_user(db, current_user.id)
+    if result is None:
+        raise HTTPException(status_code=404, detail="user not found")
+    return {"msg" : f"user {current_user.id} deleted successfully"}
