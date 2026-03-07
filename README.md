@@ -80,7 +80,7 @@ This stops containers but keeps database data intact.
 ### 7. Production Deployment (Render)
 The application is deployed on Render directly from github repository.
 - Source: GitHub repository  
-- Build & Deploy: Managed by Render  
+- Build & Deploy: Managed by Render using Dockerfile  
 - Auto-deploy enabled on every push to `main` branch 
 
 ```bash
