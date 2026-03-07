@@ -54,6 +54,15 @@ def test_register_fresh():
     assert "id" in data
     assert "password" not in data
 
+    headers = auth_headers(email="fresh@example.com", password="fresh123")
+    response = client.delete("/profile/delete", headers=headers)
+    assert response.status_code == 200
+    assert "msg"  in response.json() 
+       
+def test_register_duplicate():
+    response = register_user()
+    assert response.status_code == 400
+
 def test_login():
     response = login_user()
     assert response.status_code == 200
