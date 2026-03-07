@@ -63,3 +63,11 @@ def revoke_token(db:Session, token: str):
     db.commit()
     db.refresh(db_token)
     return True
+
+def delete_user(db:Session, user_id:int):
+    db_user = db.get(Users, user_id)
+    if not db_user:
+        return None
+    db.delete(db_user)
+    db.commit()
+    return True
