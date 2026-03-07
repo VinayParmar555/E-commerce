@@ -20,7 +20,11 @@ services:
     build: .
     container_name: e-commerce_app
     restart: unless-stopped
-    command: uvicorn main:app --reload --host 0.0.0.0 --port 8000
+    command: >
+      sh -c "echo 'Running Alembic migrations...' &&
+             python -m alembic upgrade head &&
+             echo 'Starting FastAPI...' &&
+             uvicorn main:app --reload --host 0.0.0.0 --port 8000"
     ports: 
       - 8000:8000
     env_file: 
