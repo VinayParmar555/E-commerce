@@ -24,28 +24,36 @@ You can run this project in two ways:
 
 ### 1. Clone the Repository
 ```bash
-git clone <your-repo-url>
-cd E-commerce_backup
+git clone https://github.com/VinayParmar555/E-commerce.git
+cd E-commerce
 ```
 
 ### 2. Create environment variables
 ```bash
-DATABASE_URL=postgresql://postgres:postgres@postgres:5432/your_db_name
+DATABASE_URL="postgresql://postgres:yourpassword@postgres:5432/yourdbname"
+DATABASE_NAME=yourdbname
+DATABASE_USER=postgres
+DATABASE_PWD=yourpassword
 
-POSTGRES_DB=your_db_name
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
+JWT_SECRET_KEY=your_jwt_secret_key
+JWT_REFRESH_SECRET_KEY=your_jwt_refresh_secret_key
+JWT_EMAIL_SECRET_KEY=your_jwt_email_secret_key
+
+ACCESS_TOKEN_EXPIRE_MINUTES=15
+REFRESH_TOKEN_EXPIRE_DAYS=7
+EMAIL_TOKEN_EXPIRE_MINUTES=60
 
 REDIS_HOST=redis
 REDIS_PORT=6379
 REDIS_DB=0
 
-JWT_SECRET_KEY=your_secret
-JWT_REFRESH_SECRET_KEY=your_refresh_secret
-JWT_EMAIL_SECRET_KEY=your_email_secret
-ACCESS_TOKEN_EXPIRE_MINUTES=15
-REFRESH_TOKEN_EXPIRE_DAYS=7
-EMAIL_TOKEN_EXPIRE_MINUTES=10
+RAZORPAY_KEY_ID=rzp_test_xxxxxxxxxxxx
+RAZORPAY_KEY_SECRET=your_razorpay_key_secret
+RAZORPAY_WEBHOOK_SECRET=your_razorpay_webhook_secret
+
+SENDGRID_API_KEY=SG.your_sendgrid_api_key
+FROM_EMAIL=your_email@example.com
+
 ```
 ### 3. Start the development server
 ```bash
