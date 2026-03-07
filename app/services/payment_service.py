@@ -52,8 +52,8 @@ def create_payment(db:Session, user_id:int, order:Order, data:PaymentCreate) -> 
                 "payment_capture" : 1
             }
             razorpay_order = _razorpay_client.order.create(order_data)
-        except:
-            raise RazorpayPaymentFailed("Razorpay order creation failed!")
+        except Exception as e:
+            raise RazorpayPaymentFailed(f"Razorpay order creation failed: {e}")
         payment_status = PaymentStatus.pending
         pg_order_id = razorpay_order["id"]
         rz_data = {
