@@ -99,7 +99,7 @@ jobs:
           fail_ci_if_error: false
 
   deploy:
-    needs: test  # ← pehle test pass hone chahiye
+    needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
 
