@@ -49,7 +49,7 @@ jobs:
 
       - name: Run Alembic migrations
         env:
-          DATABASE_URL: postgresql://${{ secrets.DATABASE_USER }}:${{ secrets.DATABASE_PWD }}@localhost:5432/${{ secrets.DATABASE_NAME }}
+          DATABASE_URL: postgresql://${{ secrets.DATABASE_USER }}:${{ secrets.DATABASE_PWD }}@127.0.0.1:5432/${{ secrets.DATABASE_NAME }}
           DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
           DATABASE_USER: ${{ secrets.DATABASE_USER }}
           DATABASE_PWD: ${{ secrets.DATABASE_PWD }}
@@ -71,7 +71,7 @@ jobs:
 
       - name: Run tests with coverage
         env:
-          DATABASE_URL: postgresql://${{ secrets.DATABASE_USER }}:${{ secrets.DATABASE_PWD }}@localhost:5432/${{ secrets.DATABASE_NAME }}
+          DATABASE_URL: postgresql://${{ secrets.DATABASE_USER }}:${{ secrets.DATABASE_PWD }}@127.0.0.1:5432/${{ secrets.DATABASE_NAME }}
           DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
           DATABASE_USER: ${{ secrets.DATABASE_USER }}
           DATABASE_PWD: ${{ secrets.DATABASE_PWD }}
