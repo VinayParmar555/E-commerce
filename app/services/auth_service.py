@@ -36,6 +36,12 @@ def authenticate_user(db: Session, email: str, password: str):
     return db_user
 
 def create_tokens(db: Session, user: Users):
+    # Revoke all existing refresh tokens for this user
+    db.query(RefreshToken).filter(
+        RefreshToken.user_id == user.id,
+        RefreshToken.revoked == False
+    ).update({"revoked": True})
+
     access_token = create_access_token(data={"sub" : str(user.id)})
     refresh_token_str = str(uuid.uuid4())
     expires = datetime.now(timezone.utc) + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
@@ -87,3 +93,11 @@ def verify_email_token(db: Session, token: str):
     db.commit()
     db.refresh(db_user)
     return True
+
+def cleanup_expired_tokens(db: Session):
+    """Delete expired and revoked refresh tokens from the database."""
+    deleted = db.query(RefreshToken).filter(
+        (RefreshToken.expires_at < datetime.now(timezone.utc)) | (RefreshToken.revoked == True)
+    ).delete(synchronize_session=False)
+    db.commit()
+    return deleted
