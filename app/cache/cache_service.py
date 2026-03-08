@@ -9,6 +9,9 @@ def get_cached_products(db:Session):
     if cached:
         return msgpack.unpackb(cached, raw=False)
     products = List_of_products(db)
+    
+    if not products:
+        return []
 
     result = [
         {
