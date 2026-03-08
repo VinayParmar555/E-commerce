@@ -1,5 +1,8 @@
 # E-Commerce Backend
 
+[![CI/CD](https://github.com/VinayParmar555/E-commerce/actions/workflows/test.yml/badge.svg)](https://github.com/VinayParmar555/E-commerce/actions)
+[![codecov](https://codecov.io/gh/VinayParmar555/E-commerce/badge.svg)](https://codecov.io/gh/VinayParmar555/E-commerce)
+
 A production-ready **FastAPI backend** built with **PostgreSQL**, **Alembic migrations**, **Redis**, and **Docker**.  
 The application is fully containerized and deployed on **Render**.
 
