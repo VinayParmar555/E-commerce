@@ -19,8 +19,7 @@ The application is fully containerized and deployed on **Render**.
 - **Payment Integration** — Razorpay (live) + mock gateway for testing; webhook with HMAC verification
 - **Shipping Management** — Address CRUD and order shipping status tracking
 - **Redis Caching** — Product listing cache with msgpack serialization and TTL-based invalidation
-- **Rate Limiting** — Redis-backed sliding window limiter with IP and user-level strategies
-- **Structured Logging** — Centralized logger with timestamps and log levels across all services
+- **Rate Limiting** — Redis-backed rate limiter with IP and user-level strategies
 - **Input Validation** — Pydantic schemas with field-level constraints (min/max length, value ranges)
 - **Refresh Token Cleanup** — Automatic cleanup of expired/revoked tokens on app startup
 - **Database Migrations** — 13 Alembic migration versions with full schema history
