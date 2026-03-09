@@ -1,10 +1,10 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class ProductBase(BaseModel):
-    name: str
-    price: float
-    description: str
-    quantity: int
+    name: str = Field(..., min_length=1, max_length=200)
+    price: float = Field(..., gt=0)
+    description: str = Field(..., min_length=1, max_length=1000)
+    quantity: int = Field(..., ge=0)
 
 class ProductUpdate(ProductBase):
     id : int

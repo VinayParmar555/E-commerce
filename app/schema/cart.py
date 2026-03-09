@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class CartItem(BaseModel):
-    quantity : int
+    quantity : int = Field(..., ge=1)
     product_id : int
 
 class CartOut(CartItem):

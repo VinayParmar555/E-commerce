@@ -1,13 +1,13 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from enum import Enum
 
 class ShippingBase(BaseModel):
-    address_line1:str
-    address_line2:str | None = None
-    city:str
+    address_line1:str = Field(..., min_length=1, max_length=300)
+    address_line2:str | None = Field(None, max_length=300)
+    city:str = Field(..., min_length=1, max_length=100)
     postal_code:int
-    state:str
-    country:str
+    state:str = Field(..., min_length=1, max_length=100)
+    country:str = Field(..., min_length=1, max_length=100)
 
 class ShippingAddress(ShippingBase):
     id:int
