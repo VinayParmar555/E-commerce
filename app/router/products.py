@@ -69,7 +69,7 @@ async def add_new_bulk_products(product:List[ProductCreate], current_user:Users=
     return {"msg" : f"{len(db_product)} bulk products added successfully"}
 
 @router.get("/pagination")
-async def paginated_product(page:int=Query(1, ge=1), limit:int=Query(10, ge=10, le=50), db:Session=Depends(get_db)):
+async def paginated_product(page:int=Query(1, ge=1), limit:int=Query(10, ge=1, le=50), db:Session=Depends(get_db)):
     db_product = pagination_process(db, page, limit)
     return {
         "page":page,
@@ -84,7 +84,7 @@ async def filter_product(
     name:str | None = None, 
     min_price:int | None = None, 
     max_price:int | None = None,
-    limit:int=Query(10, ge=10, le=50),
+    limit:int=Query(10, ge=1, le=50),
     page:int=Query(1, ge=1),
     db:Session=Depends(get_db)
     ):

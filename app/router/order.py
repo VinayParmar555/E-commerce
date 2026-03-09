@@ -46,14 +46,14 @@ async def checkout_order(data:PaymentCreate, user:Users=Depends(get_current_user
 async def fetch_placed_order_for_user(user:Users=Depends(get_current_user), _:None=Depends(rate_limit(5,60,user_key)), db:Session=Depends(get_db)):
     order = fetch_placed_order(db, user.id)
     if not order:
-        raise HTTPException(status_code=404, detail="Place order!")
+        raise HTTPException(status_code=404, detail="No orders found")
     return order
 
 @router.get("/single_placed_order/{order_id}", response_model=Order)
 async def single_placed_order(order_id:int, user:Users=Depends(get_current_user), _:None=Depends(rate_limit(3,60,user_key)), db:Session=Depends(get_db)):
     order = fetch_single_placed_order(db, user.id, order_id)
     if not order:
-        raise HTTPException(status_code=404, detail="Place order!")
+        raise HTTPException(status_code=404, detail="Order not found")
     return order
 
 @router.patch("/cancel/{order_id}", response_model=Order)
@@ -62,7 +62,7 @@ async def cancel_order(order_id:int, user:Users=Depends(get_current_user), db:Se
     if order is None:
         raise HTTPException(status_code=404, detail="Order not found!")
     if order is False:
-        raise HTTPException(status_code=400, detail="Order is already shipped")
+        raise HTTPException(status_code=400, detail="Order is already shipped and cannot be cancelled")
     return order
 
 @router.get("/shipping_status/{order_id}")

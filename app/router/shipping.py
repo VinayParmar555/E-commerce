@@ -21,7 +21,7 @@ async def add_new_address(data:ShippingBase, user:Users=Depends(get_current_user
 async def see_address(user:Users=Depends(get_current_user), _:None=Depends(rate_limit(5,60,user_key)), db:Session=Depends(get_db)):
     address = fetch_address(db, user.id)
     if not address:
-        raise HTTPException(status_code=404, detail="add address!")
+        raise HTTPException(status_code=404, detail="No shipping addresses found")
     return address
 
 @router.get("/fetch_byid/{address_id}", response_model=ShippingAddress)
@@ -35,12 +35,12 @@ async def get_user_address_byid(address_id:int, _:None=Depends(rate_limit(5,60,i
 async def update_existing_address(data:ShippingBase, address_id:int, user:Users=Depends(get_current_user), db:Session=Depends(get_db)):
     address = update_address(db, user.id, data, address_id)
     if not address:
-        raise HTTPException(status_code=404, detail="address not found")
-    return {"msg" : "Address updated succesfully"}
+        raise HTTPException(status_code=404, detail="Address not found")
+    return {"msg" : "Address updated successfully"}
 
 @router.delete("/delete/{address_id}")
 async def delete_existing_address(address_id:int, user:Users=Depends(get_current_user), db:Session=Depends(get_db)):
     address = delete_address(db, user.id, address_id)
     if not address:
-        raise HTTPException(status_code=404, detail="address not found")
-    return {"msg" : "Address deleted succesfully!"}
+        raise HTTPException(status_code=404, detail="Address not found")
+    return {"msg" : "Address deleted successfully"}

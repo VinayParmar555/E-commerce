@@ -12,21 +12,21 @@ router = APIRouter(prefix="/Cart", tags=["Cart"])
 async def add_in_cart(cart_item:CartItem, user:Users=Depends(get_current_user), db:Session=Depends(get_db)):
     cart = add_to_cart(db, cart_item, user.id)
     if cart is None:
-        raise HTTPException(status_code=404, detail="Insufficient stock")
+        raise HTTPException(status_code=404, detail="Insufficient stock or product not found")
     if cart is False:
-        raise HTTPException(status_code=404, detail="user not found")
+        raise HTTPException(status_code=404, detail="User not found")
     return cart
 
 @router.get("/see_cart")
 async def check_cart(user:Users=Depends(get_current_user), db:Session=Depends(get_db)):
     cart = see_cart(db, user.id)
     if not cart:
-        raise HTTPException(status_code=404, detail="add items to see cart")
+        raise HTTPException(status_code=404, detail="Cart is empty")
     return cart
 
 @router.delete("/delete_cart/{cart_id}")
 async def delete_cart(cart_id:int, user:Users=Depends(get_current_user), db:Session=Depends(get_db)):
     cart = remove_cart(db, user.id, cart_id)
     if not cart:
-        raise HTTPException(status_code=404, detail="cart not found")
-    return {"msg":"cart deleted succesfully"}
+        raise HTTPException(status_code=404, detail="Cart item not found")
+    return {"msg":"Cart item deleted successfully"}
