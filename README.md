@@ -173,7 +173,7 @@ FROM_EMAIL=your_email@example.com
 
 ### 3. Start the development server
 ```bash
-docker compose up -d
+docker compose up --build --no-cache
 ```
 This will start your:
 - FastAPI application
