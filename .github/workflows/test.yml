@@ -102,7 +102,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-
+    environment: production
     steps:
       - name: Deploy to Render
         run: curl ${{ secrets.RENDER_DEPLOY_HOOK }}
