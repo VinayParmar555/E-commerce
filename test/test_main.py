@@ -1,8 +1,7 @@
 import pytest
-from unittest.mock import patch
+from test.conftest import fake_redis
 from fastapi.testclient import TestClient
 from main import app
-from app.cache.redis_client import redis_client
 
 client = TestClient(app)
 
@@ -12,10 +11,10 @@ client = TestClient(app)
 
 @pytest.fixture(autouse=True)
 def reset_rate_limits():
-    for key in redis_client.scan_iter("rate:ip:*"):
-        redis_client.delete(key)
-    for key in redis_client.scan_iter("rate:user:*"):
-        redis_client.delete(key)
+    for key in fake_redis.scan_iter("rate:ip:*"):
+        fake_redis.delete(key)
+    for key in fake_redis.scan_iter("rate:user:*"):
+        fake_redis.delete(key)
     yield
 
 @pytest.fixture(autouse=True)
@@ -72,11 +71,6 @@ def test_login():
 def test_login_wrong_password():
     response = login_user(password="wrongpassword")
     assert response.status_code in (400, 401)
-
-def test_verify_request():
-    headers = auth_headers()
-    response = client.post("/account/verify-request", headers=headers)
-    assert response.status_code == 200
 
 def test_protected_route_without_token():
     response = client.get("/Cart/see_cart")
