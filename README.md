@@ -199,7 +199,7 @@ This stops containers but keeps database data intact.
 The application is deployed on Render directly from github repository.
 - Source: GitHub repository  
 - Build & Deploy: Managed by Render using Dockerfile  
-- Auto-deploy enabled on every push to `main` branch 
+- Auto-deploy enabled on every CI Pass to `main` branch 
 
 ```bash
 https://e-commerce-ytgi.onrender.com/docs
